@@ -1,0 +1,71 @@
+{
+  "name": "smartdown-quasar",
+  "version": "0.0.1",
+  "description": "Smartdown Editor via Quasar/VueJS",
+  "productName": "Smartdown Editor",
+  "author": "Daniel B Keith",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --ext .js,.vue ./",
+    "lint-fix": "eslint --fix --ext .js,.vue ./",
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "builds": "npm run build && http-server -c-1 dist/spa",
+    "dev:electron": "quasar dev -m electron",
+    "dev:android": "quasar dev -m android",
+    "dev:ios": "quasar dev -m capacitor -T ios",
+    "build:electron": "quasar build -m electron",
+    "build:ios": "quasar build -m capacitor -T ios",
+    "build:ioside": "quasar build -m capacitor -T ios --ide",
+    "test": "echo \"No test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@capacitor/core": "^3.4.3",
+    "@capacitor/splash-screen": "^1.2.2",
+    "@quasar/extras": "^1.13.3",
+    "@quasar/quasar-ui-qmarkdown": "^2.0.0-beta.2",
+    "core-js": "^3.21.1",
+    "prosemirror-example-setup": "^1.1.2",
+    "prosemirror-markdown": "^1.8.0",
+    "prosemirror-model": "^1.16.1",
+    "prosemirror-schema-basic": "^1.1.2",
+    "prosemirror-schema-list": "^1.1.6",
+    "prosemirror-state": "^1.3.4",
+    "prosemirror-view": "^1.23.9",
+    "quasar": "^2.6.1",
+    "smartdown": "^1.0.52",
+    "vue": "^3.2.31",
+    "vue-i18n": "^9.1.9",
+    "vue-router": "^4.0.14",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.17.0",
+    "@capacitor/cli": "^3.4.3",
+    "@capacitor/ios": "^3.4.3",
+    "@quasar/app": "^3.3.3",
+    "electron": "^18.0.0",
+    "electron-packager": "^15.2.0",
+    "eslint": "^7.14.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-vue": "^7.0.0",
+    "eslint-webpack-plugin": "^2.4.0"
+  },
+  "browserslist": [
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
+  ],
+  "engines": {
+    "node": ">= 12.22.1",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}

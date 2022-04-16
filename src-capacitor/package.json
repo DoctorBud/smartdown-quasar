@@ -1,0 +1,13 @@
+{
+  "name": "smartdown-quasar",
+  "version": "0.0.1",
+  "description": "Smartdown Editor via Quasar/VueJS",
+  "author": "Daniel B Keith",
+  "private": true,
+  "dependencies": {
+    "@capacitor/app": "^1.1.0",
+    "@capacitor/cli": "^3.4.1",
+    "@capacitor/core": "^3.4.1",
+    "@capacitor/splash-screen": "^1.2.2"
+  }
+}

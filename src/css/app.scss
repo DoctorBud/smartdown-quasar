@@ -1,0 +1,19 @@
+// app global css in SCSS form
+
+.readonly-border {
+	border: 1px solid black !important;
+	margin: 0;
+	padding: 0;
+}
+
+.edit-border {
+	border: 1px solid darkgray;
+}
+
+.edit-source-border {
+	border: 1px solid darkgray !important;
+}
+
+.background {
+	background-color: lavender;
+}
