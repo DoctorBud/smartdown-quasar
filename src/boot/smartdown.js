@@ -14,16 +14,18 @@
 export default async (/* { app } */) => {
   console.log('smartdown:bootxx');
 
-  try {
-    // const helloResponse = await fetch('https://doctorbud.com/resume.html');
-    const helloResponse = await fetch('file:///Users/bud/DoctorBud/smartdown-quasar/package.json');
-    console.log('###helloResponse:', helloResponse.status);
-    console.log('###helloResponse:', helloResponse.url);
-    console.log('###helloResponse:', ...helloResponse.headers);
-    const hello = await helloResponse.text();
-    console.log('###hello:', hello);
-  } catch (e) {
-    console.log('###hello error:', e);
+  if (window.publicFolder) { // Electron
+    try {
+      // const helloResponse = await fetch('https://doctorbud.com/resume.html');
+      const helloResponse = await fetch('file:///Users/bud/DoctorBud/smartdown-quasar/package.json');
+      console.log('###helloResponse:', helloResponse.status);
+      console.log('###helloResponse:', helloResponse.url);
+      console.log('###helloResponse:', ...helloResponse.headers);
+      const hello = await helloResponse.text();
+      console.log('###hello:', hello);
+    } catch (e) {
+      console.log('###hello error:', e);
+    }
   }
 
   // Code here has access to the Object param above, connecting
