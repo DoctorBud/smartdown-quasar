@@ -5,9 +5,9 @@
   "author": "Daniel B Keith",
   "private": true,
   "dependencies": {
-    "@capacitor/app": "^1.1.0",
-    "@capacitor/cli": "^3.4.1",
-    "@capacitor/core": "^3.4.1",
+    "@capacitor/app": "^1.1.1",
+    "@capacitor/cli": "^3.5.0",
+    "@capacitor/core": "^3.5.0",
     "@capacitor/splash-screen": "^1.2.2"
   }
 }
