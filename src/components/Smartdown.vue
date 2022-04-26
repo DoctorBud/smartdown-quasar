@@ -16,6 +16,7 @@
 /* eslint-disable */
 
 import { ref, reactive, computed, watch, onBeforeMount, onMounted, onUpdated, nextTick } from 'vue';
+import smartdownEvents from 'src/composables/smartdownEvents.js';
 
 export default {
   props: {
@@ -59,6 +60,21 @@ export default {
         lazy: false // immediate: true
       }
     )
+
+    const eventBus = smartdownEvents();
+    watch(eventBus.cardToLoad, async () => {
+      const cardPath = `gallery/${eventBus.cardToLoad.value}.md`;
+      console.log('cardPath', cardPath);
+
+      todo.value = await (await fetch(cardPath)).text();
+      html.value = await smartdownToHTML(todo.value);
+      await nextTick();
+      const outputDiv = document.getElementById('smartdown-output');
+      const input1 = document.getElementById('INPUT1');
+      smartdown.setHome(todo.value, outputDiv, async function() {
+        smartdown.startAutoplay(outputDiv);
+      });
+    });
 
     const add = () => {
       if (todo.value) {

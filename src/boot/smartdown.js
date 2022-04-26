@@ -10,6 +10,8 @@
 // import '../../node_modules/smartdown/dist/lib/smartdown.css';
 // import '../../node_modules/smartdown/dist/lib/fonts.css';
 
+import smartdownEvents from 'src/composables/smartdownEvents.js';
+
 // export default async ({ app, router, store }) => {
 export default async (/* { app } */) => {
   console.log('smartdown:bootxx');
@@ -56,8 +58,11 @@ export default async (/* { app } */) => {
 
   const calcHandlers = smartdown.defaultCalcHandlers;
 
-  function cardLoader(/* cardKey */) {
-    // $rootScope.$broadcast('go-to-card', cardKey);
+  function cardLoader(cardKey) {
+    console.log('cardLoader', cardKey);
+    const eventBus = smartdownEvents();
+
+    eventBus.loadCard(cardKey);
   }
 
   const linkRules = [

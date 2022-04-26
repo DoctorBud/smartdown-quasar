@@ -1,0 +1,42 @@
+[
+  {
+    "title": "Mode Meter",
+    "description": "Mode Meter",
+    "filename": "ModeMeter.md"
+  },
+  {
+    "title": "Simple Markdown",
+    "description": "Simple Markdown",
+    "filename": "Markdown.md"
+  },
+  {
+    "title": "Simple Smartdown",
+    "description": "Simple Smartdown",
+    "filename": "Smartdown.md"
+  },
+  {
+    "title": "P5JS Ellipse",
+    "description": "Ellipse",
+    "filename": "Ellipse.md"
+  },
+  {
+    "title": "Mandelbrot",
+    "description": "Mandelbrot",
+    "filename": "Mandelbrot.md"
+  },
+  {
+    "title": "P5JS Mobius",
+    "description": "P5JS Mobius",
+    "filename": "Mobius.md"
+  },
+  {
+    "title": "Pong Game",
+    "description": "Pong Game adapted from https://kellylougheed.medium.com/javascript-pong-with-p5-js-3ae1b859418c",
+    "filename": "Pong.md"
+  },
+  {
+    "title": "JSPsych",
+    "description": "JSPsych",
+    "filename": "JSPsych.md"
+  }
+]
