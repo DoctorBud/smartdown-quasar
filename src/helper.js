@@ -31,4 +31,19 @@ const useLocalStorage = (key, defaultValue) => {
   return value;
 };
 
+export async function getGalleryNotes() {
+  const index = await (await fetch('gallery/index.json')).json();
+
+  /* eslint-disable-next-line no-restricted-syntax */
+  for (const entry of index) {
+    /* eslint-disable-next-line no-await-in-loop */ // https://eslint.org/docs/rules/no-await-in-loop
+    const content = await (await fetch(`gallery/${entry.filename}`)).text();
+    entry.content = content;
+    entry.createdAt = Date.now();
+    entry.updatedAt = entry.createdAt;
+  }
+
+  return index;
+}
+
 export const useLocalNotes = () => useLocalStorage('notes', []);

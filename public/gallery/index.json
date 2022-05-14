@@ -1,5 +1,10 @@
 [
   {
+    "title": "Flanker",
+    "description": "Flanker",
+    "filename": "JSPsych/Flanker.md"
+  },
+  {
     "title": "Mode Meter",
     "description": "Mode Meter",
     "filename": "ModeMeter.md"

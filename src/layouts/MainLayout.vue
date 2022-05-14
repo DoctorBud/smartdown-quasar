@@ -1,32 +1,7 @@
 <template>
   <q-layout
     class="background"
-    view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-btn size="sm" color="grey" to="/" type="reset">Index</q-btn>
-
-        <q-toolbar-title>
-          Notes
-        </q-toolbar-title>
-
-        <q-btn
-          size="xs"
-          round
-          color="positive" icon="add" to="/new"></q-btn>
-
-        <div>v{{ packageVersion }}</div>
-      </q-toolbar>
-    </q-header>
+    view="hHh lpR fFf">
 
     <q-drawer
       v-model="leftDrawerOpen"
@@ -55,18 +30,47 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container
+      style="border:">
       <router-view />
     </q-page-container>
+
+    <q-footer elevated
+      class="bg-grey-8 text-white"
+      style="height:45px;">
+      <q-toolbar>
+        <q-btn
+          flat
+          dense
+          round
+          size="sm"
+          icon="menu"
+          aria-label="Menu"
+          @click="toggleLeftDrawer"
+        />
+
+        <q-toolbar-title>
+          <q-btn size="sm" to="/" type="reset">
+            <q-avatar size="30px">
+              <img src="img/smartdown-120x120.png">
+            </q-avatar>
+          </q-btn>
+        </q-toolbar-title>
+
+        <q-btn
+          v-if="path === '/'"
+          size="sm"
+          round
+          color="positive" icon="add" to="/new">
+        </q-btn>
+      </q-toolbar>
+    </q-footer>
   </q-layout>
 </template>
 
 <script>
 import ActionLink from 'components/ActionLink.vue';
 import EssentialLink from 'components/EssentialLink.vue';
-
-/* eslint-disable-next-line */
-const packageVersion = process.env.packageVersion;
 
 const actionLinks = [
   {
@@ -128,7 +132,9 @@ const essentialLinks = [
   },
 ];
 
-import { defineComponent, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
+import { defineComponent, ref, computed } from 'vue';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -140,15 +146,17 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const route = useRoute();
+    const path = computed(() => route.path);
 
     return {
+      path,
       actionLinks,
       essentialLinks,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
-      packageVersion,
     };
   },
 });

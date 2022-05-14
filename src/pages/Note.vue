@@ -1,5 +1,5 @@
 <template>
-  <q-page padding>
+  <q-page>
     <Container>
       <div class="q-gutter-lg">
         <q-toggle

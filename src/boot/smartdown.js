@@ -11,24 +11,25 @@
 // import '../../node_modules/smartdown/dist/lib/fonts.css';
 
 import smartdownEvents from 'src/composables/smartdownEvents.js';
+import { useLocalNotes, getGalleryNotes } from 'src/helper';
 
 // export default async ({ app, router, store }) => {
 export default async (/* { app } */) => {
   console.log('smartdown:bootxx');
 
-  if (window.publicFolder) { // Electron
-    try {
-      // const helloResponse = await fetch('https://doctorbud.com/resume.html');
-      const helloResponse = await fetch('file:///Users/bud/DoctorBud/smartdown-quasar/package.json');
-      console.log('###helloResponse:', helloResponse.status);
-      console.log('###helloResponse:', helloResponse.url);
-      console.log('###helloResponse:', ...helloResponse.headers);
-      const hello = await helloResponse.text();
-      console.log('###hello:', hello);
-    } catch (e) {
-      console.log('###hello error:', e);
-    }
-  }
+  // if (window.publicFolder) { // Electron
+  //   try {
+  //     // const helloResponse = await fetch('https://doctorbud.com/resume.html');
+  //     const helloResponse = await fetch('file:///Users/bud/DoctorBud/smartdown-quasar/package.json');
+  //     console.log('###helloResponse:', helloResponse.status);
+  //     console.log('###helloResponse:', helloResponse.url);
+  //     console.log('###helloResponse:', ...helloResponse.headers);
+  //     const hello = await helloResponse.text();
+  //     console.log('###hello:', hello);
+  //   } catch (e) {
+  //     console.log('###hello error:', e);
+  //   }
+  // }
 
   // Code here has access to the Object param above, connecting
   // with other parts of your app;
@@ -74,15 +75,21 @@ export default async (/* { app } */) => {
 
   const baseURL = window.publicFolder || '/';
 
-  console.log('smartdown:boot1 baseURL', baseURL);
+  // console.log('smartdown:boot1 baseURL', baseURL);
 
   const resultPromise = new Promise((resolve) => {
-    console.log('smartdown:boot2');
+    // console.log('smartdown:boot2');
     smartdown.initialize(
       icons,
       baseURL,
-      () => {
+      async () => {
         console.log('smartdown:boot3');
+        const notes = useLocalNotes();
+
+        const newNotes = await getGalleryNotes();
+
+        notes.value.splice(0, notes.value.length, ...newNotes);
+
         resolve();
       },
       cardLoader,
@@ -90,8 +97,6 @@ export default async (/* { app } */) => {
       linkRules,
     );
   });
-
-  console.log('smartdown:boot3');
 
   return resultPromise;
   // app.use(VuePlugin);

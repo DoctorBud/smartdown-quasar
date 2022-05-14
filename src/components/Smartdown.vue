@@ -2,7 +2,7 @@
   <div>
     <div
       id="smartdown-outer-container"
-      class="smartdown-outer-container">
+      class="smartdown-outer-container smartdown-theme-chat">
       <div
         class="smartdown-container"
         id="smartdown-output"

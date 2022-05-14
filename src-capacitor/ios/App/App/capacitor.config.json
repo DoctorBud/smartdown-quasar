@@ -20,5 +20,11 @@
 			"layoutName": "launch_screen",
 			"useDialog": true
 		}
+	},
+	"ios": {
+		"contentInset": "always"
+	},
+	"server": {
+		"url": "http://172.16.10.189:8080"
 	}
 }

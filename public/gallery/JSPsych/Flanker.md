@@ -1,27 +1,8 @@
-# FlankerIntroduction
----
-
-### Flanker Experiment
-
-I really like the [Flanker Experiment](https://github.com/jspsych/jsPsych/blob/master/examples/demo-flanker.html) example, and have adapted it to Smartdown.
-
-The cool thing (IMHO) about this experiment is to see how your reaction time is increased when the context is *distracting* vs *reinforcing*.
-
-[Begin Flanker Experiment](:@FlankerExperiment)
-
-
----
-
-[jsPsych Home](:@JSPsych)
-
-
-# FlankerExperiment
----
-
-```javascript /playable/autoplay
+```javascript /autoplay/kiosk
 //smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/jspsych.js
+//smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-html-button-response.js
 //smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-html-keyboard-response.js
-//smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-image-keyboard-response.js
+//smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-image-button-response.js
 
 env.flankerData = undefined;
 
@@ -34,7 +15,14 @@ smartdown.importCssUrl('https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/css/js
 smartdown.importCssCode(
 `
 #${myDiv.id} .jspsych-content img {
- height: 200px;
+ height: 150px;
+}
+.jspsych-display-element {
+  font-size: 14px;
+}
+.smartdown-playable-kiosk {
+  background: white !important;
+  //margin-top: 22px !important;
 }
 `);
 
@@ -46,9 +34,9 @@ var reps_per_trial_type = 1;
 var timeline = [];
 
 var welcomeBlock = {
-  type: 'html-keyboard-response',
-  choices: [32],
-  stimulus: 'Welcome to the experiment. Press <b>spacebar</b> to begin.'
+  type: 'html-button-response',
+  stimulus: 'Welcome to the experiment. Press <b>Begin</b>.',
+  choices: ['Begin'],
 };
 timeline.push(welcomeBlock);
 
@@ -60,21 +48,21 @@ const instructionsStimulus =
 </p>
 <img src="${imgPrefix}inc1.png"></img>
 <p>
-Press the left arrow key if the middle arrow is pointing left. (<)
+Press Left if the middle arrow is pointing left. (<b>&lt;</b>)
 </p>
 <p>
-Press the right arrow key if the middle arrow is pointing right. (>)
+Press Right if the middle arrow is pointing right. (<b>&gt;</b>)
 </p>
 <p>
-Press <b>spacebar</b> to begin.
+Press <b>Begin</b>.
 </p>
 `;
 
 
 var instructionsBlock = {
-  type: 'html-keyboard-response',
+  type: 'html-button-response',
   stimulus: instructionsStimulus,
-  choices: [32],
+  choices: ['Begin'],
   post_trial_gap: 1000
 };
 timeline.push(instructionsBlock);
@@ -99,25 +87,25 @@ var testStimuli = [
   }
 ];
 
-
 /* defining test timeline */
 var testBlock = {
   timeline: [{
-    type: 'image-keyboard-response',
-    choices: [37, 39],
+    type: 'image-button-response',
+    choices: ['<b>&lt</b>;', '<b>&gt;</b>'],
     trial_duration: 1500,
     stimulus: jsPsych.timelineVariable('stimulus'),
     data: jsPsych.timelineVariable('data'),
     on_finish: function(data){
       var correct = false;
-      if (data.direction == 'left' &&  data.key_press == 37 && data.rt > -1) {
+      if (data.direction == 'left' &&  data.button_pressed === '0' && data.rt > -1) {
         correct = true;
       }
-      else if (data.direction == 'right' && data.key_press == 39 && data.rt > -1) {
+      else if (data.direction == 'right' && data.button_pressed === '1' && data.rt > -1) {
         correct = true;
       }
 
       data.correct = correct;
+      console.log('#data', data.direction, data.button_pressed, data.correct);
     },
     post_trial_gap: function() {
         return Math.floor(Math.random() * 1500) + 500;
@@ -133,7 +121,7 @@ var debriefBlock = {
   type: 'html-keyboard-response',
   choices: jsPsych.NO_KEYS,
   stimulus: function() {
-    var total_trials = jsPsych.data.get().filter({trial_type: 'image-keyboard-response'}).count();
+    var total_trials = jsPsych.data.get().filter({trial_type: 'image-button-response'}).count();
     var accuracy = Math.round(jsPsych.data.get().filter({correct: true}).count() / total_trials * 100);
     var congruent_rt = Math.round(jsPsych.data.get().filter({correct: true, stim_type: 'congruent'}).select('rt').mean());
     var incongruent_rt = Math.round(jsPsych.data.get().filter({correct: true, stim_type: 'incongruent'}).select('rt').mean());
@@ -153,6 +141,7 @@ The experiment is now complete. Thank you!
 </p>
 `;
 
+    smartdown.toggleKiosk(myDiv.id);
     jsPsych.endExperiment();
 
     return result;
@@ -183,83 +172,8 @@ window.setTimeout(function() {
 
 ```
 
-
 ---
 
-[View Flanker Data](:@ViewFlankerData)
+- [View Flanker Data](:@JSPsych/FlankerView)
+- [Back to jsPsych Home](:@JSPsych)
 
----
-
-[Repeat Experiment](:@JSPsych/Flanker)
-
----
-
-[Back to jsPsych Home](:@JSPsych)
-
-
-# ViewFlankerData
----
-
-The `jsPsych` results from the previous experiment have been captured in the Smartdown variable `experimentData`, which we can display in raw JSON format via a Smartdown [Cell]()
-
-[Experiment Data](:!flankerData|json)
-
-[Visualize the Results](:@VisualizeFlankerData)
-
----
-
-[Repeat Experiment](:@JSPsych/Flanker)
-
----
-
-[Back to jsPsych Home](:@JSPsych)
-
-
-# VisualizeFlankerData
----
-
-Now that we have the data gathered via `jsPsych` in a Smartdown variable, we can use other tech to visualize the data. Since this is a first draft, we'll just do something pretty, but meaningless. We'll just build a pie-chart that shows the correct vs incorrect percentages. We'll use [Plotly](https://smartdown.site/#gallery/Plotly.md), which is a nice library built upon [D3](https://smartdown.site/#gallery/D3.md) that makes it easy to make charts and graphs.
-
-We're going to have to write a little code to make this visualization happen.
-
-```plotly/autoplay/playable
-const myDiv = this.div;
-myDiv.innerHTML = `<h3>Waiting for flankerData to be available</h3>`;
-this.dependOn = ['flankerData'];
-this.depend = function() {
-  myDiv.innerHTML = '';
-  const experimentData = env.flankerData;
-  const correctVsIncorrect = [0, 0];
-  experimentData.forEach((trial) => {
-    if (trial.correct !== undefined) {
-      if (trial.correct) {
-        correctVsIncorrect[0] += 1;
-      }
-      else {
-        correctVsIncorrect[1] += 1;
-      }
-    }
-  });
-  var data = [{
-    values: correctVsIncorrect,
-    labels: ['Correct', 'Incorrect'],
-    type: 'pie'
-  }];
-
-  var layout = {
-    height: 400,
-    width: 500
-  };
-
-  Plotly.newPlot(myDiv, data, layout, {displayModeBar: false});
-}
-
-```
-
----
-
-[Repeat Experiment](:@JSPsych/Flanker)
-
----
-
-[Back to jsPsych Home](:@JSPsych)
