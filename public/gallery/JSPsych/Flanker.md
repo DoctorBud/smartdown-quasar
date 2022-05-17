@@ -1,4 +1,4 @@
-```javascript /autoplay/kiosk
+```javascript /autoplay
 //smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/jspsych.js
 //smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-html-button-response.js
 //smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-html-keyboard-response.js
@@ -10,6 +10,8 @@ const myDiv = this.div;
 // myDiv.style.width = '500px';
 myDiv.style.height = '400px';
 myDiv.style.margin = 'auto';
+
+smartdown.toggleKiosk(myDiv.id);
 
 smartdown.importCssUrl('https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/css/jspsych.css');
 smartdown.importCssCode(
@@ -24,6 +26,12 @@ smartdown.importCssCode(
   background: white !important;
   //margin-top: 22px !important;
 }
+b.bigbutton {
+  margin-left: 20px;
+  margin-right: 20px;
+  font-weight: 600;
+  font-size: 150%;
+}
 `);
 
 const imgPrefix = '/gallery/resources/';
@@ -35,7 +43,7 @@ var timeline = [];
 
 var welcomeBlock = {
   type: 'html-button-response',
-  stimulus: 'Welcome to the experiment. Press <b>Begin</b>.',
+  stimulus: '<br>Welcome to the experiment. Press <b>Begin</b>.',
   choices: ['Begin'],
 };
 timeline.push(welcomeBlock);
@@ -43,6 +51,7 @@ timeline.push(welcomeBlock);
 
 const instructionsStimulus =
 `
+<br>
 <p>
   In this task, you will see five arrows on the screen, like the example below.
 </p>
@@ -67,7 +76,6 @@ var instructionsBlock = {
 };
 timeline.push(instructionsBlock);
 
-
 var testStimuli = [
   {
     stimulus: imgPrefix + 'con1.png',
@@ -91,7 +99,7 @@ var testStimuli = [
 var testBlock = {
   timeline: [{
     type: 'image-button-response',
-    choices: ['<b>&lt</b>;', '<b>&gt;</b>'],
+    choices: ['<b class="bigbutton">&lt;</b>', '<b class="bigbutton">&gt;</b>'],
     trial_duration: 1500,
     stimulus: jsPsych.timelineVariable('stimulus'),
     data: jsPsych.timelineVariable('data'),
@@ -127,6 +135,7 @@ var debriefBlock = {
     var incongruent_rt = Math.round(jsPsych.data.get().filter({correct: true, stim_type: 'incongruent'}).select('rt').mean());
     const result =
 `
+<br>
 <p>
   You responded correctly on <strong>${accuracy}%</strong> of the trials.
 </p>

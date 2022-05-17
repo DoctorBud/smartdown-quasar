@@ -15,9 +15,19 @@
           icon="img:icons/Markdown-mark.svg"
           label="Markdown" />
 
-        <q-btn
-          class="q-ml-sm float-right"
+        <q-toggle
           size="sm"
+          v-model="details"
+          icon="info"
+          label="Info" />
+
+        <span class="full-width">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>
+
+        <q-btn
+          class="q-mr-lg"
+          size="xs"
           round
           color="red"
           icon="delete"
@@ -43,17 +53,6 @@
 
       <div
         v-if="editing">
-        <q-input
-          v-model="note.title"
-          label="Title" filled
-        />
-        <q-input
-          v-model="note.description"
-          label="Description"
-          filled
-          class="q-mt-sm"
-          dense
-        />
         <Editor
           v-if="!source"
           class="full-width edit-border"
@@ -69,18 +68,6 @@
       </div>
 
       <div v-else>
-        <q-input
-          readonly
-          v-model="note.title"
-          label="Title" filled
-        />
-        <q-input
-          readonly
-          v-model="note.description"
-          label="Description"
-          filled
-        />
-
         <q-markdown
           v-if="!useSmartdown"
           class="q-mt-md q-pa-sm readonly-border"
@@ -92,8 +79,43 @@
           class="q-mt-md q-pa-sm readonly-border"
           :initInput="note.content">
         </smartdown>
-
       </div>
+
+      <q-slide-transition>
+        <div v-show="details" class="absolute-bottom">
+          <div
+            v-if="editing">
+            <q-input
+              v-if="details"
+              v-model="note.title"
+              label="Title" filled
+            />
+            <q-input
+              v-if="details"
+              v-model="note.description"
+              label="Description"
+              filled
+              class="q-mt-sm"
+              dense
+            />
+          </div>
+
+          <div v-else>
+            <q-input
+              readonly
+              v-model="note.title"
+              label="Title" filled
+            />
+            <q-input
+              readonly
+              v-model="note.description"
+              label="Description"
+              filled
+            />
+          </div>
+        </div>
+      </q-slide-transition>
+
     </Container>
   </q-page>
 </template>
@@ -119,6 +141,7 @@ export default {
     const source = ref(false);
     const confirm = ref(false);
     const useSmartdown = ref(true);
+    const details = ref(false);
 
     const router = useRouter();
     const remove = () => {
@@ -127,7 +150,7 @@ export default {
     };
 
     return {
-      note, editing, remove, source, confirm, useSmartdown,
+      note, editing, remove, source, confirm, useSmartdown, details,
     };
   },
 };
