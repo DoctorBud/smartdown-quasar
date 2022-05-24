@@ -1,129 +1,38 @@
 <template>
   <q-page>
     <Container>
-      <div class="q-gutter-lg">
-        <q-toggle
-          size="sm"
-          v-model="editing"
-          icon="edit"
-          label="Editing" />
-
-        <q-toggle
-          v-if="editing"
-          size="sm"
-          v-model="source"
-          icon="img:icons/Markdown-mark.svg"
-          label="Markdown" />
-
-        <q-toggle
-          size="sm"
-          v-model="details"
-          icon="info"
-          label="Info" />
-
-        <span class="full-width">
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </span>
-
-        <q-btn
-          class="q-mr-lg"
-          size="xs"
-          round
-          color="red"
-          icon="delete"
-          @click="confirm = true"
-        />
-
-        <q-dialog v-model="confirm" persistent>
-          <q-card>
-            <q-card-section class="row items-center">
-              <q-avatar icon="check" color="primary" text-color="white" />
-              <span class="q-ml-sm">Please confirm that you wish to delete this note.</span>
-            </q-card-section>
-
-            <q-card-actions align="right">
-              <q-btn flat label="Never Mind" color="primary" v-close-popup />
-              <q-btn
-                @click="remove"
-                flat label="Remove Note" color="primary" v-close-popup />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-      </div>
-
       <div
-        v-if="editing">
+        v-if="editMode.editing">
         <Editor
-          v-if="!source"
+          v-if="!editMode.source"
           class="full-width edit-border"
           v-model="note.content" />
+
         <q-input
           v-else
           v-model="note.content"
-          class="full-width edit-source-border"
-          style="max-height: 50vh; overflow: auto;"
+          class="full-width edit-source-border markdown-editor"
           filled autogrow
           type="textarea"
         />
       </div>
 
-      <div v-else>
-        <q-markdown
-          v-if="!useSmartdown"
-          class="q-mt-md q-pa-sm readonly-border"
-          :src="note.content">
-        </q-markdown>
-
+      <div
+        v-else>
         <smartdown
-          v-else
           class="q-mt-md q-pa-sm readonly-border"
           :initInput="note.content">
         </smartdown>
       </div>
-
-      <q-slide-transition>
-        <div v-show="details" class="absolute-bottom">
-          <div
-            v-if="editing">
-            <q-input
-              v-if="details"
-              v-model="note.title"
-              label="Title" filled
-            />
-            <q-input
-              v-if="details"
-              v-model="note.description"
-              label="Description"
-              filled
-              class="q-mt-sm"
-              dense
-            />
-          </div>
-
-          <div v-else>
-            <q-input
-              readonly
-              v-model="note.title"
-              label="Title" filled
-            />
-            <q-input
-              readonly
-              v-model="note.description"
-              label="Description"
-              filled
-            />
-          </div>
-        </div>
-      </q-slide-transition>
-
     </Container>
   </q-page>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import { useLocalNotes } from 'src/helper';
+import { useStore } from 'src/composables/store';
 
 import Editor from 'src/components/Editor.vue';
 import Container from 'src/components/Container.vue';
@@ -137,26 +46,28 @@ export default {
     const noteId = computed(() => parseInt(route.params.id, 10));
     const note = computed(() => notes.value[noteId.value]);
 
-    const editing = ref(false);
-    const source = ref(false);
-    const confirm = ref(false);
-    const useSmartdown = ref(true);
-    const details = ref(false);
+    const store = useStore();
+    console.log('####store', store);
+    const editMode = computed({
+      get: () => store.getEditMode.value,
+      set: store.updateEditMode,
+    });
 
-    const router = useRouter();
-    const remove = () => {
-      notes.value.splice(noteId.value, 1);
-      router.push('/');
-    };
+    store.updateNote(note);
 
     return {
-      note, editing, remove, source, confirm, useSmartdown, details,
+      note, editMode,
     };
   },
 };
 </script>
 
 <style>
+.markdown-editor {
+  background-color: ivory;
+  overflow: auto;
+}
+
 .q-field--readonly .q-field__control::before,
 .q-field--filled .q-field__control::before {
   opacity: 1;

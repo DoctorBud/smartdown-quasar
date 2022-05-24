@@ -11,6 +11,6 @@ export default async () => {
 
   if (Platform.is.capacitor) {
     await StatusBar.setStyle({ style: Style.Light });
-    // await StatusBar.hide();
+    await StatusBar.hide();
   }
 };

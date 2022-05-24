@@ -1,5 +1,5 @@
 <template>
-  <div ref="editor" style="margin-bottom: 23px;"></div>
+  <div ref="editor" class="editor"></div>
 </template>
 
 <script>
@@ -47,6 +47,10 @@ export default {
 </script>
 
 <style>
+div.editor {
+  background-color: ivory;
+}
+
 .ProseMirror {
   position: relative;
 }
