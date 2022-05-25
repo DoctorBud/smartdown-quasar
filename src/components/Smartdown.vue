@@ -88,7 +88,7 @@ export default {
     };
 
     onBeforeMount(() => {
-      console.log('V3 beforeMount!');
+      // console.log('V3 beforeMount!');
     })
 
     function escape(htmlStr) {
@@ -102,9 +102,7 @@ export default {
     async function smartdownToHTML(text) {
       const resultPromise = new Promise((resolve, reject) => {
         const outputDiv = document.createElement('div');
-        console.log('###before smartdown.setSmartdown');
         smartdown.setSmartdown(text, outputDiv, function() {
-          console.log('###after smartdown.setSmartdown');
           const smartdownHTML = outputDiv.innerHTML;
           resolve(smartdownHTML);
         });
@@ -114,17 +112,11 @@ export default {
     }
 
     onMounted(async () => {
-      console.log('V3 onMounted!');
       html.value = await smartdownToHTML(todo.value);
-      console.log('V3 before nextTick', smartdown.smartdownCells);
       await nextTick();
-      console.log('V3 after nextTick', smartdown.smartdownCells);
       const outputDiv = document.getElementById('smartdown-output');
-      console.log('###outputDiv', outputDiv);
       const input1 = document.getElementById('INPUT1');
-      console.log('###input1', input1);
       smartdown.setHome(todo.value, outputDiv, async function() {
-        console.log('V3 before autoPlay');
         smartdown.startAutoplay(outputDiv);
       });
     });

@@ -68,6 +68,7 @@
               filled
               class="q-mt-sm"
               dense
+              type="textarea"
             />
           </div>
 
@@ -82,6 +83,7 @@
               v-model="note.description"
               label="Description"
               filled
+              type="textarea"
             />
           </div>
         </div>
@@ -107,27 +109,27 @@
 
         <q-toggle
           v-if="note"
-          size="xs"
+          size="sm"
           v-model="editMode.editing"
           icon="edit" />
 
         <q-toggle
           v-if="note"
           :disabled="!editMode.editing"
-          size="xs"
+          size="sm"
           v-model="editMode.source"
           icon="img:icons/Markdown-mark.svg" />
 
         <q-toggle
           v-if="note"
-          size="xs"
+          size="sm"
           v-model="editMode.detailed"
           icon="info" />
 
         <q-btn
           v-if="note"
           class="q-mr-lg"
-          size="xs"
+          size="sm"
           round
           color="red"
           icon="delete"
@@ -168,46 +170,22 @@ const actionLinks = [
 
 const essentialLinks = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    title: 'Smartdown Site',
+    caption: 'smartdown.io',
+    icon: 'img:/img/favicon-128x128.png',
+    link: 'https://smartdown.io',
+  },
+  {
+    title: 'Smartdown Gallery',
+    caption: 'smartdown.site',
+    icon: 'img:/img/favicon-128x128.png',
+    link: 'https://smartdown.site',
   },
   {
     title: 'Github',
-    caption: 'github.com/quasarframework',
+    caption: 'github.com/smartdown',
     icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
+    link: 'https://github.com/smartdown',
   },
 ];
 
@@ -255,9 +233,9 @@ export default defineComponent({
     };
 
     const newNote = () => {
-      const now = Date();
-      const nowTitle = now.toLocaleString();
-      console.log('####nowTitle', nowTitle);
+      const now = new Date();
+      const nowTitle = now.toLocaleString('en-us');
+
       const notex = reactive({
         title: nowTitle,
         description: '',
@@ -298,10 +276,21 @@ export default defineComponent({
 
 <style>
 .details {
-  border: 1px solid darkgray;
   background: ghostwhite;
   position: fixed;
+  margin: 0px;
+  padding: 0px 5px;
   width: 100%;
-  bottom:  45px;
+  bottom:  50px;
+}
+
+.q-field--filled
+  .q-field__control:before {
+  border-radius: 5px;
+  border: 1px solid darkgray !important;
+}
+
+.details textarea {
+  resize: none !important;
 }
 </style>

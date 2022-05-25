@@ -26,7 +26,6 @@ module.exports = configure((ctx) => ({
   // https://quasar.dev/quasar-cli/boot-files
   boot: [
     'i18n',
-    'qmarkdown',
     'smartdown',
     'splash',
   ],

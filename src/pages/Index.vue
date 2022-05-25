@@ -24,8 +24,6 @@ export default defineComponent({
   components: { NoteCard, Container },
   name: 'PageIndex',
   setup() {
-    console.log('Index:setup');
-
     const note = reactive({
       title: '',
       description: '',

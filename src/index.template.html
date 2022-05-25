@@ -2,10 +2,6 @@
 <html>
   <head>
     <title><%= productName %></title>
-    <script>
-      console.log('scripthead');
-    </script>
-
     <meta charset="utf-8">
     <meta name="description" content="<%= productDescription %>">
     <meta name="format-detection" content="telephone=no">
@@ -29,15 +25,11 @@
   </head>
   <body>
     <script>
-      console.log('script1x');
       window.smartdownResourceURL = '';
       window.smartdownBaseURL = '/';
     </script>
     <script
       src="lib/smartdown.js">
-    </script>
-    <script>
-      console.log('script2x', window.smartdown);
     </script>
 
     <!-- DO NOT touch the following DIV -->

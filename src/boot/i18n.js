@@ -3,8 +3,6 @@ import { createI18n } from 'vue-i18n';
 import messages from 'src/i18n';
 
 export default boot(({ app }) => {
-  console.log('i18n:boot');
-
   const i18n = createI18n({
     locale: 'en-US',
     messages,

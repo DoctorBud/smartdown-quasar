@@ -47,7 +47,6 @@ export default {
     const note = computed(() => notes.value[noteId.value]);
 
     const store = useStore();
-    console.log('####store', store);
     const editMode = computed({
       get: () => store.getEditMode.value,
       set: store.updateEditMode,
