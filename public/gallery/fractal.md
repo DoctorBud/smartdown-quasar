@@ -8,6 +8,18 @@ We had a great time learning about fractals at [Mathigon's](https://mathigon.org
 
 
 ```javascript /autoplay/kiosk
+smartdown.importCssCode(
+`
+.q-footer {
+  background: transparent !important;
+  border: none !important;
+}
+
+`);
+
+
+
+
 // our favorite julia seeds
 let juliaSeeds = [ 
 [-0.391,-0.587], 
@@ -215,7 +227,7 @@ function sizeCanvas() {
 
 
 sizeCanvas();
-
+console.log(canvas.width);
 let maxiterations = 64 * 6;
 
 
@@ -260,12 +272,23 @@ function generateFractalSeed() {
   seedA = k[0];   // random seed
   seedB = k[1];
 
+  // randomly perturb the seed
+  if (Math.floor(Math.random() * 3) == 0) {
+    seedA = k[0] + Math.random() * (Math.floor(Math.random() * 2) ? -0.02 : 0.02);
+    console.log('seedA');
+  }
+  if (Math.floor(Math.random() * 3) == 0) {
+    seedB = k[1] + Math.random() * (Math.floor(Math.random() * 2) ? -0.02 : 0.02);
+    console.log('seedB');
+  }
+
+
   suspendDepend = true;
   smartdown.setVariable('A', seedA);  // update the UI with seed
   smartdown.setVariable('B', seedB);
   suspendDepend = false;
 
-  zoom = 300 + Math.floor(Math.random() * 600);  // random zoom level
+  zoom = canvas.width / 3 + Math.floor(Math.random() * canvas.width/2);  // random zoom level
 }
 
 
@@ -426,6 +449,14 @@ this.div.onmousedown = function(e) {
   newColors();
   draw();
 }
+
+this.div.addEventListener('wheel', function(e) { 
+  e.preventDefault();
+  zoom += e.deltaY;
+  console.log(e.deltaY);
+  draw();
+}, false);
+
 
 this.div.addEventListener('touchstart', function(e) { 
 
