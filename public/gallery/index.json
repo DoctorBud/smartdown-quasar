@@ -1,5 +1,10 @@
 [
   {
+    "title": "Julia",
+    "description": "Julia Set",
+    "filename": "Julia.md"
+  },
+  {
     "title": "Flanker",
     "description": "Flanker",
     "filename": "JSPsych/Flanker.md"

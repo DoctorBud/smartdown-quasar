@@ -166,6 +166,12 @@ const actionLinks = [
     icon: 'clear_all',
     to: '/reset',
   },
+  {
+    title: 'GitHub',
+    caption: 'Login to GitHub',
+    icon: 'img:/img/Octocat.png',
+    to: '/github',
+  },
 ];
 
 const essentialLinks = [

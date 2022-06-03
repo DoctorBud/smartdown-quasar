@@ -31,21 +31,6 @@ import { useRouter } from 'vue-router';
 
 import Container from 'src/components/Container.vue';
 
-// async function getGalleryNotes() {
-//   const index = await (await fetch('gallery/index.json')).json();
-
-//   /* eslint-disable-next-line no-restricted-syntax */
-//   for (const entry of index) {
-//     /* eslint-disable-next-line no-await-in-loop */ // https://eslint.org/docs/rules/no-await-in-loop
-//     const content = await (await fetch(`gallery/${entry.filename}`)).text();
-//     entry.content = content;
-//     entry.createdAt = Date.now();
-//     entry.updatedAt = entry.createdAt;
-//   }
-
-//   return index;
-// }
-
 export default defineComponent({
   components: { Container },
   name: 'Reset',
