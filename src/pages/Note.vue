@@ -1,4 +1,4 @@
- <template>
+<template>
   <q-page>
     <Container>
       <div
@@ -65,11 +65,6 @@ export default {
 </script>
 
 <style>
-.markdown-editor {
-  background-color: ivory;
-  overflow: auto;
-}
-
 .q-field--readonly .q-field__control::before,
 .q-field--filled .q-field__control::before {
   opacity: 1;

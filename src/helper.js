@@ -1,8 +1,6 @@
 import {
   ref,
   watch,
-  onMounted,
-  onUnmounted,
 } from 'vue';
 
 const useLocalStorage = (key, defaultValue) => {
@@ -13,14 +11,6 @@ const useLocalStorage = (key, defaultValue) => {
   };
 
   read();
-
-  onMounted(() => {
-    window.addEventListener('storage', read);
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('storage', read);
-  });
 
   const write = () => {
     window.localStorage.setItem(key, JSON.stringify(value.value));
@@ -47,3 +37,17 @@ export async function getGalleryNotes() {
 }
 
 export const useLocalNotes = () => useLocalStorage('notes', []);
+
+export async function deleteAllNotes() {
+  const notes = await useLocalNotes();
+
+  notes.value.splice(0);
+}
+
+export async function loadGalleryNotes() {
+  const notes = useLocalNotes();
+
+  const newNotes = await getGalleryNotes();
+
+  notes.value.push(...newNotes);
+}

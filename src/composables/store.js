@@ -1,14 +1,17 @@
-/* eslint-disable */
-
 // https://www.thisdot.co/blog/provide-inject-api-with-vue-3
 
-import { computed, inject, provide, reactive } from "vue";
+import {
+  computed,
+  inject,
+  provide,
+  reactive,
+} from 'vue';
 
 export const initStore = () => {
   // State
   const state = reactive({
-    name: "Bob Day",
-    email: "bob@martianmovers.com",
+    name: 'Bob Day',
+    email: 'bob@martianmovers.com',
     note: null,
     editMode: {
       editing: false,
@@ -51,23 +54,23 @@ export const initStore = () => {
     setEditMode(editMode);
   };
 
-  provide("getUsername", getUsername);
-  provide("getEmail", getEmail);
-  provide("getEditMode", getEditMode);
-  provide("getNote", getNote);
-  provide("updateUsername", updateUsername);
-  provide("updateEmail", updateEmail);
-  provide("updateNote", updateNote);
-  provide("updateEditMode", updateEditMode);
+  provide('getUsername', getUsername);
+  provide('getEmail', getEmail);
+  provide('getEditMode', getEditMode);
+  provide('getNote', getNote);
+  provide('updateUsername', updateUsername);
+  provide('updateEmail', updateEmail);
+  provide('updateNote', updateNote);
+  provide('updateEditMode', updateEditMode);
 };
 
 export const useStore = () => ({
-  getUsername: inject("getUsername"),
-  getEmail: inject("getEmail"),
-  getNote: inject("getNote"),
-  getEditMode: inject("getEditMode"),
-  updateUsername: inject("updateUsername"),
-  updateEmail: inject("updateEmail"),
-  updateNote: inject("updateNote"),
-  updateEditMode: inject("updateEditMode"),
+  getUsername: inject('getUsername'),
+  getEmail: inject('getEmail'),
+  getNote: inject('getNote'),
+  getEditMode: inject('getEditMode'),
+  updateUsername: inject('updateUsername'),
+  updateEmail: inject('updateEmail'),
+  updateNote: inject('updateNote'),
+  updateEditMode: inject('updateEditMode'),
 });

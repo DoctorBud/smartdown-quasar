@@ -3,12 +3,7 @@
 //  - Good place for import statements,
 //  - No access to router, Vuex store, ...
 
-// // import { boot } from 'quasar/wrappers';
-// import 'smartdown';
 /* global smartdown */
-
-// import '../../node_modules/smartdown/dist/lib/smartdown.css';
-// import '../../node_modules/smartdown/dist/lib/fonts.css';
 
 import smartdownEvents from 'src/composables/smartdownEvents.js';
 
