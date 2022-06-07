@@ -76,17 +76,6 @@ export default {
       });
     });
 
-    const add = () => {
-      if (todo.value) {
-        items.value.push(todo.value);
-        todo.value = '';
-      }
-    };
-
-    const remove = index => {
-      items.value.splice(index, 1);
-    };
-
     onBeforeMount(() => {
       // console.log('V3 beforeMount!');
     })
@@ -127,8 +116,6 @@ export default {
       items,
       itemsQuantity,
       append,
-      add,
-      remove,
       html,
     };
   }

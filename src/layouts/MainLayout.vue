@@ -229,16 +229,17 @@ export default defineComponent({
       set: store.updateEditMode,
     });
 
-    const notes = useLocalNotes();
     const noteId = computed(() => parseInt(route.params.id, 10));
     const confirm = ref(false);
     const router = useRouter();
     const remove = () => {
+      const notes = useLocalNotes();
       notes.value.splice(noteId.value, 1);
       router.push('/');
     };
 
     const newNote = () => {
+      const notes = useLocalNotes();
       const now = new Date();
       const nowTitle = now.toLocaleString('en-us');
 
@@ -249,7 +250,7 @@ export default defineComponent({
       });
 
       const idx = notes.value.length;
-
+      console.log('idx', idx, notes.value);
       notes.value.push({
         ...notex,
         createdAt: now,

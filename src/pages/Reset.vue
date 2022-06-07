@@ -12,11 +12,14 @@
 
           <q-card-actions align="right">
             <q-btn
+              @click="clearNotes"
+              flat label="Delete All" color="primary" v-close-popup />
+            <q-btn
+              @click="loadGallery"
+              flat label="Load Gallery" color="primary" v-close-popup />
+            <q-btn
               @click="cancel"
               flat label="Never Mind" color="primary" v-close-popup />
-            <q-btn
-              @click="reset"
-              flat label="Reset Notes" color="primary" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -26,7 +29,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { useLocalNotes, getGalleryNotes } from 'src/helper';
+import { deleteAllNotes, loadGalleryNotes } from 'src/helper';
 import { useRouter } from 'vue-router';
 
 import Container from 'src/components/Container.vue';
@@ -35,30 +38,28 @@ export default defineComponent({
   components: { Container },
   name: 'Reset',
   setup() {
-    console.log('Reset.setup()');
     const confirm = ref(true);
 
     const router = useRouter();
     const cancel = () => {
-      console.log('#cancel');
       router.push('/');
     };
 
-    const reset = async () => {
-      console.log('#reset');
+    const clearNotes = async () => {
+      await deleteAllNotes();
+      router.push('/');
+    };
 
-      const notes = useLocalNotes();
-
-      const newNotes = await getGalleryNotes();
-
-      notes.value.splice(0, notes.value.length, ...newNotes);
+    const loadGallery = async () => {
+      await loadGalleryNotes();
       router.push('/');
     };
 
     return {
       confirm,
       cancel,
-      reset,
+      clearNotes,
+      loadGallery,
     };
   },
 });

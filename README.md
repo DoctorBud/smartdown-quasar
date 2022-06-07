@@ -5,8 +5,7 @@ Smartdown Editor via Quasar/VueJS
 ## Inspirations
 
 - ProseMirror example
-- Notepad example
-
+- [Quasar App (note-app)](https://github.com/codingwithjustin/quasar-note-app.git)
 
 ## Install the dependencies
 

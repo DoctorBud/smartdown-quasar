@@ -64,8 +64,14 @@
                     </td>
                     <td>
                       <q-btn
-                        @click="loadGistText(file, file.filename, file.raw_url)"
+                        @click="previewGistFile(gist, file)"
                         :label="`View`"
+                        size="sm"
+                        color="primary"
+                      />
+                      <q-btn
+                        @click="importGistFile(gist, file)"
+                        :label="`Import`"
                         size="sm"
                         color="primary"
                       />
@@ -109,7 +115,7 @@
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="check" color="primary" text-color="white" />
-            <span class="q-ml-sm">Please confirm that you wish to delete this note.</span>
+            <span class="q-ml-sm">Login to GitHub.</span>
           </q-card-section>
 
           <q-input
@@ -136,10 +142,10 @@
 </template>
 
 <script>
-/* eslint-disable no-unused-vars */
 import {
   defineComponent,
   ref,
+  reactive,
   onMounted,
   nextTick,
 } from 'vue';
@@ -147,6 +153,7 @@ import { useRouter } from 'vue-router';
 import { Octokit } from '@octokit/core';
 
 import Container from 'src/components/Container.vue';
+import { useLocalNotes } from 'src/helper';
 
 export default defineComponent({
   components: { Container },
@@ -163,7 +170,6 @@ export default defineComponent({
     const gists = ref([]);
     const preview = ref(false);
     const previewText = ref('');
-
     const router = useRouter();
 
     const getGists = async () => {
@@ -176,11 +182,11 @@ export default defineComponent({
       console.log('githubGists', githubGists.data);
 
       // gists.value = githubGists.data;
-      gists.value = githubGists.data.map((gist, name) => ({
+      gists.value = githubGists.data.map((gist) => ({
         ...gist,
         expanded: true,
         name: gist.files[Object.keys(gist.files)[0]].filename,
-      }));
+      })).reverse();
 
       // const refinedGists = await githubGists.data.map(async (gist) => {
       //   const files = await gist.files;
@@ -200,8 +206,8 @@ export default defineComponent({
       // console.log('#refinedGists', refinedGists);
     };
 
-    const loadGistText = async (file, filename, url) => {
-      console.log('#loadGistText', filename, url);
+    const loadGistFile = async (filename, url) => {
+      console.log('#loadGistFile', filename, url);
 
       /*
         // For some reason, octokit.request fails in Safari and Firefox
@@ -219,8 +225,66 @@ export default defineComponent({
 
       // This code works in all browsers
       const text = await fetch(url, {});
-      previewText.value = await text.text();
+      return text.text();
+    };
+
+    const previewGistFile = async (gist, file) => {
+      const gistName = gist.name;
+      const { filename } = file;
+      const url = file.raw_url;
+
+      console.log('#previewGistFile', gistName, filename, url);
+
+      const text = await loadGistFile(filename, url);
+      previewText.value = await text;
       preview.value = true;
+    };
+
+    const importGistFile = async (gist, file) => {
+      const gistName = gist.description;
+      const { filename } = file;
+      const url = file.raw_url;
+
+      console.log('#importGistFile', gistName, filename, url);
+      const content = await loadGistFile(filename, url);
+      console.log('#import ', filename, content);
+
+      const notes = useLocalNotes();
+      const now = new Date();
+      const title = `${gist.owner.login}: ${gistName}/${filename}`;
+      const description = `GitHub Gist imported from ${gist.html_url}`;
+
+      let newIndex = notes.value.length;
+      let foundIndex;
+
+      for (let index = 0; index < newIndex; index += 1) {
+        if (notes.value[index].title === title) {
+          foundIndex = index;
+          break;
+        }
+      }
+
+      if (foundIndex > -1) {
+        newIndex = foundIndex;
+        const foundNote = notes.value[foundIndex];
+        foundNote.content = content;
+      } else {
+        const notex = reactive({
+          title,
+          description,
+          content,
+        });
+
+        notes.value.push({
+          ...notex,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+
+      // editMode.value.detailed = true;
+      // editMode.value.editing = false;
+      router.push(`/note/${newIndex}`);
     };
 
     const cancel = () => {
@@ -265,7 +329,8 @@ export default defineComponent({
       login,
       logout,
       getGists,
-      loadGistText,
+      previewGistFile,
+      importGistFile,
       preview,
       cancelPreview,
       previewText,
