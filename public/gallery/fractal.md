@@ -94,6 +94,7 @@ let juliaSeeds = [
 ];
 
 
+////////////////////////////  COLORING  ///////////////////////////////////////////////
 
 class RGBColor {
   constructor(r,g,b) {
@@ -102,64 +103,73 @@ class RGBColor {
     this.b = b;
   }
 
-  byIndex(i) {  // 0 is red, 1 is green, 2 is blue
-    switch (i) {
-      case 0: return this.r;
-      case 1: return this.g;
-      case 2: return this.b;
-    }
+  array() { return [this.r, this.g, this.b]; }
+}
+
+class ColorSeed {
+  constructor(r, g, b) {
+    this.base = new RGBColor(r,g,b);
+    this.incs = new Array();
+    for (let i=0; i < 3; i++) { this.incs.push(new Array()); }
   }
 }
 
-
 class SmoothColorScheme {
   constructor(min, max, mod = 1, ns = 4, maxInc = 2) {
-    this.min = min;
-    this.max = max;
-    this.mod = mod;
+    this.min = min;  // 0
+    this.max = max;  // 255
+    this.mod = mod;  // 1? 
+
     this.maxInc = maxInc;
-    this.incs = [[],[],[]];
+
+    // with 4 sections, that's 64 basic color posibilities
     // take the 0-255 range and divide it into sections
     this.numSections = ns;
     this.sectionWidth = Math.floor((this.max - this.min + 1) / this.numSections);
-    this.base = new RGBColor(                        // base color is random color
-      Math.floor(Math.random() * this.numSections) * this.sectionWidth + this.min,
-      Math.floor(Math.random() * this.numSections) * this.sectionWidth + this.min,
-      Math.floor(Math.random() * this.numSections) * this.sectionWidth + this.min);
-    this.current = new RGBColor(this.base.r, this.base.g, this.base.b);
+
+    this.seed = new ColorSeed(this.randColVal(), this.randColVal(), this.randColVal());
+    this.current = new RGBColor(this.seed.base.r, this.seed.base.g, this.seed.base.b);
     this.i = 0;
     this.up = true;
+
+    console.log('seed pre', this.seed);
 
     // now we randomly generate increments that move up each RGB up or down
     for (let i=0; i < 3; i++) {   // for each of r,g,b
 
-      let inc = Math.floor((this.base.byIndex(i) - this.min) / this.sectionWidth); // what section are we in?
+      let inc = Math.floor((this.seed.base.array()[i] - this.min) / this.sectionWidth); // what section are we in?
 
       for (let j=0; j < 6; j++) {  
         let up = Math.floor(Math.random() * this.maxInc);
         if ((inc == 0 || up) && inc != this.numSections) {  // we have room to turn this color up
-          this.incs[i].push(Math.floor(Math.random() * ((this.numSections + 1) - inc)));
+          const newinc = Math.floor(Math.random() * ((this.numSections + 1) - inc));
+          this.seed.incs[i].push(newinc);
         } 
         else {    // we'll turn this color down
-          this.incs[i].push( -Math.floor(Math.random() * (inc + 1)));
+          this.seed.incs[i].push( -Math.floor(Math.random() * (inc + 1)));
         }
-        inc += this.incs[i][j];
+        inc += this.seed.incs[i][j];
       }
     }
+    console.log('seed', this.seed);
+  }
+
+  randColVal() {
+    return Math.floor(Math.random() * this.numSections) * this.sectionWidth + this.min;
   }
 
   inc() {
     if ((this.i % this.mod) == 0) {
       let index = Math.floor(this.i / (this.sectionWidth * this.mod));
       if (this.up) {
-        this.current.r += this.incs[0][index];
-        this.current.g += this.incs[1][index];
-        this.current.b += this.incs[2][index];
+        this.current.r += this.seed.incs[0][index];
+        this.current.g += this.seed.incs[1][index];
+        this.current.b += this.seed.incs[2][index];
       }
       else {
-        this.current.r -= this.incs[0][index];
-        this.current.g -= this.incs[1][index];
-        this.current.b -= this.incs[2][index];
+        this.current.r -= this.seed.incs[0][index];
+        this.current.g -= this.seed.incs[1][index];
+        this.current.b -= this.seed.incs[2][index];
       }
     }
 
@@ -180,9 +190,6 @@ class SmoothColorScheme {
     }
   }
 
-  getColor() {
-    return 'rgb(' + this.current.r + ',' + this.current.g + ',' + this.current.b + ')';
-  }
 
   numberColors() { return 6 * this.sectionWidth; }
 
@@ -194,9 +201,9 @@ class SmoothColorScheme {
 
   reset() {
     this.i = 0;
-    this.current.r = this.base.r;
-    this.current.g = this.base.g;
-    this.current.b = this.base.b;  
+    this.current.r = this.seed.base.r;
+    this.current.g = this.seed.base.g;
+    this.current.b = this.seed.base.b;  
     this.up = true;  
   }
 
@@ -227,7 +234,6 @@ function sizeCanvas() {
 
 
 sizeCanvas();
-console.log(canvas.width);
 let maxiterations = 64 * 6;
 
 
@@ -253,6 +259,15 @@ function newColors() {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
+
+class Julia {
+  constructor(seedX, seedY, panX, panY, zoom) {
+    this.seed = { x: seedX, y: seedY };
+    this.pan = { x: panX, y: panY };
+    this.zoom = zoom;
+  }
+}
+
 
 // parameters for a fractal 
 let zoom = 500;
@@ -315,7 +330,7 @@ function julia(x, y, maxiterations, imagedata, offsetx, offsety, panx, pany, zoo
   // Get palette color based on the number of iterations
   let color;
   if (it == maxiterations) {
-      color = {r:cs.base.r,g:cs.base.g,b:cs.base.b};
+      color = {r:cs.seed.base.r,g:cs.seed.base.g,b:cs.seed.base.b};
   } else {
       let index = Math.floor((it / (maxiterations)) * (maxiterations-1));
       color = {r: palette[index].r, g:palette[index].g, b:palette[index].b};

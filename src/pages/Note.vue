@@ -1,4 +1,4 @@
-<template>
+ <template>
   <q-page>
     <Container>
       <div
@@ -8,13 +8,10 @@
           class="full-width edit-border"
           v-model="note.content" />
 
-        <q-input
+        <SourceEditor
           v-else
-          v-model="note.content"
-          class="full-width edit-source-border markdown-editor"
-          filled autogrow
-          type="textarea"
-        />
+          class="full-width edit-border"
+          v-model="note.content" />
       </div>
 
       <div
@@ -37,9 +34,15 @@ import { useStore } from 'src/composables/store';
 import Editor from 'src/components/Editor.vue';
 import Container from 'src/components/Container.vue';
 import Smartdown from 'src/components/Smartdown.vue';
+import SourceEditor from 'src/components/SourceEditor.vue';
 
 export default {
-  components: { Container, Editor, Smartdown },
+  components: {
+    Container,
+    Editor,
+    Smartdown,
+    SourceEditor,
+  },
   setup() {
     const notes = useLocalNotes();
     const route = useRoute();
