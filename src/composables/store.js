@@ -11,9 +11,9 @@ export const initStore = () => {
     email: "bob@martianmovers.com",
     note: null,
     editMode: {
-      editing: true,
+      editing: false,
       detailed: false,
-      source: true,
+      source: false,
     },
   });
 
