@@ -69,9 +69,9 @@ export default async (/* { app } */) => {
         // the notes on app restart
         //
 
-        const notes = useLocalNotes();
-        const newNotes = await getGalleryNotes();
-        notes.value.splice(0, notes.value.length, ...newNotes);
+        // const notes = useLocalNotes();
+        // const newNotes = await getGalleryNotes();
+        // notes.value.splice(0, notes.value.length, ...newNotes);
 
         resolve();
       },
