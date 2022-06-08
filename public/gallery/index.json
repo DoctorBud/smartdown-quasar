@@ -43,5 +43,10 @@
     "title": "JSPsych",
     "description": "JSPsych",
     "filename": "JSPsych.md"
+  },
+  {
+    "title": "Julia Set",
+    "description": "randomly generated fractals",
+    "filename": "fractal.md"
   }
 ]
