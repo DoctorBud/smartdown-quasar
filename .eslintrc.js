@@ -70,7 +70,7 @@ module.exports = {
     'prefer-promise-reject-errors': 'off',
     'vue/multi-word-component-names': 'off',
     'no-console': 'off',
-
+    'max-len': 'off',
     'vue/no-unused-components': 'off',
 
     // allow debugger during development only

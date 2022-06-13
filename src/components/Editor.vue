@@ -3,15 +3,22 @@
 </template>
 
 <script>
+import hljs from 'highlight.js/lib/core';
+import { highlightPlugin } from 'prosemirror-highlightjs';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { exampleSetup } from 'prosemirror-example-setup';
 
-const createState = (content) => EditorState.create({
-  doc: defaultMarkdownParser.parse(content),
-  plugins: exampleSetup({ schema }),
-});
+const createState = (content) => {
+  const plugins = exampleSetup({ schema });
+  plugins.push(highlightPlugin(hljs));
+
+  return EditorState.create({
+    doc: defaultMarkdownParser.parse(content),
+    plugins,
+  });
+};
 
 export default {
   name: 'Editor',
@@ -29,7 +36,9 @@ export default {
       state: this.state,
       dispatchTransaction: (tx) => {
         this.state = this.state.apply(tx);
-        this.view.updateState(this.state);
+        if (this.view) {
+          this.view.updateState(this.state);
+        }
         this.lastValue = defaultMarkdownSerializer.serialize(this.state.doc);
         this.$emit('update:modelValue', this.lastValue);
       },
@@ -64,6 +73,9 @@ div.editor {
 
 .ProseMirror pre {
   white-space: pre-wrap;
+  background-color: #2d2d2d;
+  color: #ccc;
+  padding: 5px;
 }
 
 .ProseMirror li {

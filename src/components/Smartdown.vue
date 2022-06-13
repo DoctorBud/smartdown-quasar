@@ -13,15 +13,20 @@
 </template>
 
 <script>
-/* eslint-disable */
-
-import { ref, reactive, computed, watch, onBeforeMount, onMounted, onUpdated, nextTick } from 'vue';
+/* global smartdown */
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  nextTick,
+} from 'vue';
 import smartdownEvents from 'src/composables/smartdownEvents.js';
 
 export default {
   props: {
     title: String,
-    initInput: String
+    initInput: String,
   },
   setup(props) {
     const html = ref('');
@@ -36,30 +41,42 @@ export default {
       // getter
       () => items.value,
       // callback
-      (items, oldItems) => {
+      (currentItems) => {
         append.value = '';
-        items.forEach(item => {
-          append.value += item + ' ';
+        currentItems.forEach((currentItem) => {
+          append.value = `${currentItem} `;
         });
       },
       // watch Options
       {
-        lazy: false // immediate: true
-      }
-    )
+        lazy: false, // immediate: true
+      },
+    );
 
     watch(
       // getter
       () => todo.value.length,
       // callback
-      (length, oldLength) => {
+      (length) => {
         todoLength.value = length;
       },
       // watch Options
       {
-        lazy: false // immediate: true
-      }
-    )
+        lazy: false, // immediate: true
+      },
+    );
+
+    async function smartdownToHTML(text) {
+      const resultPromise = new Promise((resolve) => {
+        const outputDiv = document.createElement('div');
+        smartdown.setSmartdown(text, outputDiv, () => {
+          const smartdownHTML = outputDiv.innerHTML;
+          resolve(smartdownHTML);
+        });
+      });
+
+      return resultPromise;
+    }
 
     const eventBus = smartdownEvents();
     watch(eventBus.cardToLoad, async () => {
@@ -70,53 +87,16 @@ export default {
       html.value = await smartdownToHTML(todo.value);
       await nextTick();
       const outputDiv = document.getElementById('smartdown-output');
-      const input1 = document.getElementById('INPUT1');
-      smartdown.setHome(todo.value, outputDiv, async function() {
+      smartdown.setHome(todo.value, outputDiv, async () => {
         smartdown.startAutoplay(outputDiv);
       });
     });
-
-    const add = () => {
-      if (todo.value) {
-        items.value.push(todo.value);
-        todo.value = '';
-      }
-    };
-
-    const remove = index => {
-      items.value.splice(index, 1);
-    };
-
-    onBeforeMount(() => {
-      // console.log('V3 beforeMount!');
-    })
-
-    function escape(htmlStr) {
-      return htmlStr.replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    async function smartdownToHTML(text) {
-      const resultPromise = new Promise((resolve, reject) => {
-        const outputDiv = document.createElement('div');
-        smartdown.setSmartdown(text, outputDiv, function() {
-          const smartdownHTML = outputDiv.innerHTML;
-          resolve(smartdownHTML);
-        });
-      });
-
-      return resultPromise;
-    }
 
     onMounted(async () => {
       html.value = await smartdownToHTML(todo.value);
       await nextTick();
       const outputDiv = document.getElementById('smartdown-output');
-      const input1 = document.getElementById('INPUT1');
-      smartdown.setHome(todo.value, outputDiv, async function() {
+      smartdown.setHome(todo.value, outputDiv, async () => {
         smartdown.startAutoplay(outputDiv);
       });
     });
@@ -127,10 +107,8 @@ export default {
       items,
       itemsQuantity,
       append,
-      add,
-      remove,
       html,
     };
-  }
+  },
 };
 </script>

@@ -166,6 +166,12 @@ const actionLinks = [
     icon: 'clear_all',
     to: '/reset',
   },
+  {
+    title: 'GitHub',
+    caption: 'Login to GitHub',
+    icon: 'img:/img/Octocat.png',
+    to: '/github',
+  },
 ];
 
 const essentialLinks = [
@@ -196,6 +202,7 @@ import {
   ref,
   computed,
   reactive,
+  watch,
 } from 'vue';
 import { useStore } from 'src/composables/store';
 import { useLocalNotes } from 'src/helper';
@@ -223,16 +230,38 @@ export default defineComponent({
       set: store.updateEditMode,
     });
 
-    const notes = useLocalNotes();
+    //
+    // This seems hacky, but it gets the job done:
+    //  If the user clicks the Markdown toggle to ON,
+    //  then enable Edit mode.
+    // This article:
+    //  https://www.netlify.com/blog/2021/01/29/deep-dive-into-the-vue-composition-apis-watch-method/
+    // suggests (look for 'Nested objects/arrays') using lodash to clone objects so that old vs new is detectable.
+    // The below hack is way simpler.
+    //
+    let oldSource = editMode.value.source;
+    watch(
+      editMode,
+      () => {
+        if (editMode.value.source && !oldSource) {
+          editMode.value.editing = true;
+        }
+        oldSource = editMode.value.source;
+      },
+      { deep: true },
+    );
+
     const noteId = computed(() => parseInt(route.params.id, 10));
     const confirm = ref(false);
     const router = useRouter();
     const remove = () => {
+      const notes = useLocalNotes();
       notes.value.splice(noteId.value, 1);
       router.push('/');
     };
 
     const newNote = () => {
+      const notes = useLocalNotes();
       const now = new Date();
       const nowTitle = now.toLocaleString('en-us');
 
@@ -243,7 +272,7 @@ export default defineComponent({
       });
 
       const idx = notes.value.length;
-
+      console.log('idx', idx, notes.value);
       notes.value.push({
         ...notex,
         createdAt: now,

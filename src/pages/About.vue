@@ -11,10 +11,7 @@
 
 <script>
 import { defineComponent } from 'vue';
-// import { useLocalNotes } from 'src/helper';
-// import { useRouter } from 'vue-router';
 
-// import Editor from 'src/components/Editor.vue';
 import Container from 'src/components/Container.vue';
 
 /* eslint-disable-next-line */
