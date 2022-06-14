@@ -10,16 +10,16 @@
             <span class="q-ml-sm">Please confirm that you wish to delete this note.</span>
           </q-card-section>
 
-          <q-card-actions align="right">
+          <q-card-actions align="center">
             <q-btn
               @click="clearNotes"
-              flat label="Delete All" color="primary" v-close-popup />
+              flat size="sm" label="Delete All" color="primary" v-close-popup />
             <q-btn
               @click="loadGallery"
-              flat label="Load Gallery" color="primary" v-close-popup />
+              flat size="sm" label="Load Gallery" color="primary" v-close-popup />
             <q-btn
               @click="cancel"
-              flat label="Never Mind" color="primary" v-close-popup />
+              flat size="sm" label="Never Mind" color="primary" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>

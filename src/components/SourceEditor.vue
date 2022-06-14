@@ -112,6 +112,6 @@ export default {
 
   /* optional class for removing the outline */
   .prism-editor__textarea:focus {
-    xoutline: none;
+    outline: none;
   }
 </style>
