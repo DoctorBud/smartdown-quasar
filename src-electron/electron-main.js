@@ -35,7 +35,7 @@ function createWindow () {
 
   mainWindow.loadURL(process.env.APP_URL)
 
-  if (true || process.env.DEBUGGING) {
+  if (process.env.DEBUGGING) {
     // if on DEV or Production with debug enabled
     mainWindow.webContents.openDevTools()
   }
