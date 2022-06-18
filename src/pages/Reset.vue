@@ -51,6 +51,7 @@ export default defineComponent({
     };
 
     const loadGallery = async () => {
+      // await deleteAllNotes(); // Useful to enable this when editing the gallery
       await loadGalleryNotes();
       router.push('/');
     };

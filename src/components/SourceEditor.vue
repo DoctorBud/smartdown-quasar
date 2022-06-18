@@ -26,8 +26,12 @@ import 'prismjs/components/prism-markup';
 import 'prismjs/components/prism-markdown';
 import 'prismjs/themes/prism-tomorrow.css';
 
-import hljs from 'highlight.js';
+// import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/common';
+import markdown from 'highlight.js/lib/languages/markdown';
 import 'highlight.js/styles/base16/tomorrow-night.css';
+
+hljs.registerLanguage('markdown', markdown);
 
 export default {
   name: 'SourceEditor',
@@ -59,8 +63,54 @@ export default {
       return highlight(code, languages.markdown);
     },
     hljsHighlight(code) {
-      return hljs.highlight(code, { language: 'markdown' }).value;
-      // return hljs.highlightAuto(code).value;
+      const useDebugPrefixes = false;
+      const topLevel = hljs.highlight(code, { language: 'markdown' });
+
+      const element = document.createElement('div');
+      element.innerHTML = topLevel.value;
+
+      const codeElements = element.querySelectorAll('.hljs-code');
+      codeElements.forEach((ce) => {
+        const ceText = ce.innerText;
+        if (ceText.startsWith('```') && ceText.endsWith('```')) {
+          const trimmedBlock = ceText.slice(3, -3);
+          let trimmedBlockHtml;
+          let trimmedBlockLanguage;
+
+          const languageKeywordSplit = trimmedBlock.split(/([\w\d]+)/);
+          if (languageKeywordSplit[0] === '' && languageKeywordSplit[1] !== '') {
+            [, trimmedBlockLanguage] = languageKeywordSplit;
+            const hljsLanguage = hljs.getLanguage(trimmedBlockLanguage);
+            if (!hljsLanguage) {
+              // console.log('Unknown HLJS language', trimmedBlockLanguage);
+              trimmedBlockLanguage = undefined;
+            }
+          }
+
+          /* eslint-disable no-underscore-dangle */
+
+          if (trimmedBlockLanguage) {
+            trimmedBlockHtml = hljs.highlight(trimmedBlock, { language: trimmedBlockLanguage });
+          } else {
+            trimmedBlockHtml = hljs.highlightAuto(trimmedBlock);
+          }
+          const debugBlockPrefix = useDebugPrefixes ? `(?${trimmedBlockHtml._top.name})` : '';
+
+          ce.innerHTML = `${debugBlockPrefix}\`\`\`${trimmedBlockHtml.value}\`\`\``;
+        } else if (ceText.startsWith('`')) {
+          const trimmedInline = ceText.slice(1, -1);
+          const trimmedInlineHtml = hljs.highlightAuto(trimmedInline);
+          const debugInlinePrefix = useDebugPrefixes ? `(?${trimmedInlineHtml._top.name})` : '';
+
+          // console.log('trimmedInlineHtml', trimmedInlineHtml);
+          ce.innerHTML = `${debugInlinePrefix}\`${trimmedInlineHtml.value}\``;
+        } else {
+          console.log('other', ceText);
+          const debugOtherPrefix = '(?)';
+          ce.innerHTML = `${debugOtherPrefix}\`${ce.innerHTML}\``;
+        }
+      });
+      return element.innerHTML;
     },
     highlighter(code) {
       return this.usePrism
@@ -77,14 +127,14 @@ export default {
     color: #ccc;
     font-family: Consolas, Monaco, monospace;
     font-size: 14px;
-    line-height: 1.5em;
+    line-height: 1.25em;
     padding: 5px;
   }
 
   .my-hljs-editor {
-    xfont-family: Consolas, Monaco, monospace;
-    xfont-size: 14px;
-    xline-height: 1.5em;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.25em;
     padding: 5px;
   }
 
