@@ -1,8 +1,10 @@
 /dist
+/public
 /src-bex/www
 /src-capacitor
 /src-cordova
 /.quasar
+/.vscode
 /node_modules
 .eslintrc.js
 babel.config.js
