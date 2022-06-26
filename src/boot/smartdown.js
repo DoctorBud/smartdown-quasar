@@ -5,10 +5,9 @@
 
 /* global smartdown */
 
-import smartdownEvents from 'src/composables/smartdownEvents.js';
+import SQ from 'src/composables/SQ';
 
-/* eslint-disable-next-line no-unused-vars */
-import { useLocalNotes, getGalleryNotes } from 'src/helper';
+import { useLocalNotes, getGalleryNotes } from 'src/composables/notes';
 
 // export default async ({ app, router, store }) => {
 export default async (/* { app } */) => {
@@ -38,11 +37,14 @@ export default async (/* { app } */) => {
 
   const calcHandlers = smartdown.defaultCalcHandlers;
 
+  // This should be the ONLY place where the SQ function
+  // is invoked
+  window.SQ = SQ();
+
   function cardLoader(cardKey) {
     console.log('cardLoader', cardKey);
-    const eventBus = smartdownEvents();
 
-    eventBus.loadCard(cardKey);
+    window.SQ.loadCard(cardKey);
   }
 
   const linkRules = [
@@ -64,9 +66,11 @@ export default async (/* { app } */) => {
         // the notes on app restart
         //
 
-        // const notes = useLocalNotes();
-        // const newNotes = await getGalleryNotes();
-        // notes.value.splice(0, notes.value.length, ...newNotes);
+        if (process.env.GALLERY_DEV_MODE) {
+          const notes = useLocalNotes();
+          const newNotes = await getGalleryNotes();
+          notes.value.splice(0, notes.value.length, ...newNotes);
+        }
 
         resolve();
       },

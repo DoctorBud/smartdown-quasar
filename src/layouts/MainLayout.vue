@@ -10,20 +10,8 @@
       behavior = "mobile"
     >
       <q-list>
-        <ActionLink
-          v-for="link in actionLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
+        <DrawerItem
+          v-for="link in links"
           :key="link.title"
           v-bind="link"
         />
@@ -50,11 +38,15 @@
       <router-view />
     </q-page-container>
 
-    <q-footer elevated
+    <q-footer
       class="bg-grey-8 text-white"
-      style="xheight:45px;">
-
-      <q-slide-transition v-if="note">
+      :class="{
+        'toolbar-transparent': SQ.toolbarTransparency.value,
+        'toolbar-hidden': !SQ.toolbarVisibility.value,
+        'toolbar-fade': SQ.toolbarFade.value
+      }">
+      <q-slide-transition
+        v-if="note">
         <div v-show="editMode.detailed" class="details">
           <div
             v-if="editMode.editing">
@@ -88,24 +80,16 @@
           </div>
         </div>
       </q-slide-transition>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          size="sm"
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+      <q-toolbar
+        @dblclick="goToDashboard">
+        <q-btn size="sm"
+          @click="toggleLeftDrawer">
+          <q-avatar size="30px">
+            <img src="img/smartdown-120x120.png">
+          </q-avatar>
+        </q-btn>
 
-        <q-toolbar-title>
-          <q-btn size="sm" to="/" type="reset">
-            <q-avatar size="30px">
-              <img src="img/smartdown-120x120.png">
-            </q-avatar>
-          </q-btn>
-        </q-toolbar-title>
+        <q-space />
 
         <q-toggle
           v-if="note"
@@ -136,6 +120,26 @@
           @click="confirm = true"
         />
 
+        <q-file
+          v-if="!note"
+          v-model="uploadedNote"
+          hide-bottom-space
+          dense
+          item-aligned
+          dark
+          outlined
+          style="max-height:48px; max-width:80px;"
+          @update:model-value="uploadedNoteChanged()">
+          <q-avatar
+            size="sm"
+            style="margin-top: 7px !important;"
+            icon="file_upload"
+            color="primary"
+            text-color="white"/>
+        </q-file>
+
+        &nbsp;&nbsp;&nbsp;
+
         <q-btn
           v-if="path === '/'"
           size="sm"
@@ -150,50 +154,9 @@
 </template>
 
 <script>
-import ActionLink from 'components/ActionLink.vue';
-import EssentialLink from 'components/EssentialLink.vue';
+/* global SQ */
 
-const actionLinks = [
-  {
-    title: 'About',
-    caption: 'About this app',
-    icon: 'info',
-    to: '/about',
-  },
-  {
-    title: 'Reset',
-    caption: 'Reset with Sample Docs',
-    icon: 'clear_all',
-    to: '/reset',
-  },
-  {
-    title: 'GitHub',
-    caption: 'Login to GitHub',
-    icon: 'img:/img/Octocat.png',
-    to: '/github',
-  },
-];
-
-const essentialLinks = [
-  {
-    title: 'Smartdown Site',
-    caption: 'smartdown.io',
-    icon: 'img:/img/favicon-128x128.png',
-    link: 'https://smartdown.io',
-  },
-  {
-    title: 'Smartdown Gallery',
-    caption: 'smartdown.site',
-    icon: 'img:/img/favicon-128x128.png',
-    link: 'https://smartdown.site',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/smartdown',
-    icon: 'code',
-    link: 'https://github.com/smartdown',
-  },
-];
+import DrawerItem from 'components/DrawerItem.vue';
 
 import { useRoute, useRouter } from 'vue-router';
 
@@ -205,14 +168,13 @@ import {
   watch,
 } from 'vue';
 import { useStore } from 'src/composables/store';
-import { useLocalNotes } from 'src/helper';
+import { useLocalNotes } from 'src/composables/notes';
 
 export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    ActionLink,
-    EssentialLink,
+    DrawerItem,
   },
 
   setup() {
@@ -220,11 +182,10 @@ export default defineComponent({
     const route = useRoute();
     const path = computed(() => route.path);
     const store = useStore();
+    const uploadedNote = ref(null);
+    const uploadedNoteText = ref('');
 
-    const note = computed({
-      get: () => store.getNote.value,
-      set: store.updateNote,
-    });
+    const note = computed(() => store.getNote.value);
     const editMode = computed({
       get: () => store.getEditMode.value,
       set: store.updateEditMode,
@@ -272,23 +233,126 @@ export default defineComponent({
       });
 
       const idx = notes.value.length;
-      console.log('idx', idx, notes.value);
       notes.value.push({
         ...notex,
         createdAt: now,
         updatedAt: now,
       });
 
-      console.log('route', `/note/${idx}`);
       editMode.value.detailed = true;
       editMode.value.editing = true;
       router.push(`/note/${idx}`);
     };
 
+    const uploadedNoteChanged = async () => {
+      const blob = new Blob([uploadedNote.value]);
+
+      const content = await blob.text();
+      uploadedNoteText.value = content;
+
+      const notes = useLocalNotes();
+      const now = new Date();
+      const nowTitle = now.toLocaleString('en-us');
+
+      const title = `${uploadedNote.value.name}`;
+      const description = `File imported from ${uploadedNote.value.name} at ${nowTitle}`;
+      uploadedNote.value = null;
+
+      const notex = reactive({
+        title,
+        description,
+        content,
+      });
+
+      const idx = notes.value.length;
+      notes.value.push({
+        ...notex,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      editMode.value.editing = false;
+      editMode.value.detailed = true;
+      router.push(`/note/${idx}`);
+    };
+
+    const goToExport = () => {
+      const id = noteId.value;
+
+      if (id) {
+        router.push(`/export/${id}`);
+      } else {
+        router.push('/export/all');
+      }
+    };
+
+    const goToDashboard = () => {
+      router.push('/');
+    };
+
+    const links = [
+      {
+        title: 'Notes',
+        caption: 'List of Notes',
+        icon: 'dashboard',
+        to: '/',
+      },
+      {
+        title: 'Export',
+        caption: 'Export',
+        icon: 'file_download',
+        action: goToExport,
+      },
+      {
+        title: 'Reset',
+        caption: 'Reset with Sample Docs',
+        icon: 'clear_all',
+        to: '/reset',
+      },
+      {
+        title: 'GitHub',
+        caption: 'Login to GitHub',
+        icon: 'img:/img/Octocat.png',
+        to: '/github',
+      },
+      {
+        title: 'About',
+        caption: 'About this app',
+        icon: 'info',
+        to: '/about',
+      },
+      {
+        title: 'Smartdown Site',
+        caption: 'smartdown.io',
+        icon: 'img:/img/favicon-128x128.png',
+        link: 'https://smartdown.io',
+      },
+      {
+        title: 'Smartdown Gallery',
+        caption: 'smartdown.site',
+        icon: 'img:/img/favicon-128x128.png',
+        link: 'https://smartdown.site',
+      },
+      {
+        title: 'Smartdown GitHub',
+        caption: 'github.com/smartdown',
+        icon: 'code',
+        link: 'https://github.com/smartdown',
+      },
+    ];
+
+    watch(
+      () => route.params.id,
+      async () => {
+        SQ.setToolbarVisibility(true);
+        SQ.setToolbarTransparency(false);
+        SQ.setToolbarFade(false);
+      },
+    );
+
     return {
       path,
-      actionLinks,
-      essentialLinks,
+      links,
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
@@ -298,6 +362,12 @@ export default defineComponent({
       confirm,
       remove,
       newNote,
+      goToDashboard,
+      goToExport,
+      uploadedNote,
+      uploadedNoteText,
+      uploadedNoteChanged,
+      SQ,
     };
   },
 });

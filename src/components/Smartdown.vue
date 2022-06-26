@@ -14,6 +14,7 @@
 
 <script>
 /* global smartdown */
+/* global SQ */
 import {
   ref,
   computed,
@@ -21,7 +22,6 @@ import {
   onMounted,
   nextTick,
 } from 'vue';
-import smartdownEvents from 'src/composables/smartdownEvents.js';
 
 export default {
   props: {
@@ -78,9 +78,8 @@ export default {
       return resultPromise;
     }
 
-    const eventBus = smartdownEvents();
-    watch(eventBus.cardToLoad, async () => {
-      const cardPath = `gallery/${eventBus.cardToLoad.value}.md`;
+    watch(SQ.cardToLoad, async () => {
+      const cardPath = `gallery/${SQ.cardToLoad.value}.md`;
       console.log('cardPath', cardPath);
 
       todo.value = await (await fetch(cardPath)).text();

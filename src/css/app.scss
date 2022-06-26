@@ -1,5 +1,10 @@
 // app global css in SCSS form
 
+#smartdown-outer-container.smartdown-outer-container {
+  margin: auto;
+  width: 100%;
+}
+
 .readonly-border {
 	margin: 0;
 	padding: 0;
@@ -15,4 +20,23 @@
 
 .background {
 	background-color: lavender;
+}
+
+.toolbar-transparent {
+  background: transparent !important;
+  border: none !important;
+}
+
+.toolbar-hidden {
+	display: none;
+}
+
+.toolbar-fade {
+	opacity: 0;
+  transition: opacity 3s;
+}
+
+.toolbar-fade:hover {
+	opacity: 1;
+  transition: opacity 1s;
 }
