@@ -1,10 +1,8 @@
-### Mandelbrot, ThreeJS, WebGL
+#### Mandelbrot, ThreeJS, WebGL
 
-**Requires WebGL be enabled in your browser.**
+[Zoom Out](:=zoom=zoom/2.0) [Zoom In](:=zoom=zoom*2.0)  [](:Xbounciness) AutoZoom
 
-This is a one-pint demo of how ThreeJS and Smartdown can be used to understand the [Mandelbrot Set](https://en.wikipedia.org/wiki/Mandelbrot_set). Although Smartdown is not intended to be a programming language to build *apps* with, it is perfect for *Explorable Explanations* such as this Mandelbrot Explorer.
-
-[Zoom Out](:=zoom=zoom/2.0) [Zoom In](:=zoom=zoom*2.0) [Up](:=posY=posY+0.1/zoom) [Down](:=posY=posY-0.1/zoom) [Left](:=posX=posX-0.1/zoom) [Right](:=posX=posX+0.1/zoom) **AutoZoom** [](:Xbounciness)
+[Up](:=posY=posY+0.1/zoom) [Down](:=posY=posY-0.1/zoom) [Left](:=posX=posX-0.1/zoom) [Right](:=posX=posX+0.1/zoom)
 
 [Entire Set](:=posX=0.6;posY=0.0;zoom=1) [Region A](:=posX=0.570;posY=0.630;zoom=25) [Region B](:=posX=0.190;posY=0.650;zoom=50) [Region C](:=posX=0.04292602539062498;posY=0.6965332031250012;zoom=2048)
 [Set X/Y/Zoom](:=useCoordinates=1) [](:?coordinates)
@@ -71,9 +69,9 @@ var myDiv = that.div;
 myDiv.style.background = 'darkslateblue';
 myDiv.style['vertical-align'] = 'center';
 myDiv.style['text-align'] = 'center';
-myDiv.style['padding'] = '5px';
-var width = 450.0;
-var height = 350.0;
+myDiv.style['padding'] = '0';
+var width = 320.0;
+var height = 320.0;
 
 smartdown.setVariable('posX', 0.6, 'number');
 smartdown.setVariable('posY', 0.0, 'number');
@@ -156,3 +154,6 @@ function render(delta) {
 
 render();
 ```
+
+This is a one-pint demo of how ThreeJS and Smartdown can be used to understand the [Mandelbrot Set](https://en.wikipedia.org/wiki/Mandelbrot_set). Although Smartdown is not intended to be a programming language to build *apps* with, it is perfect for *Explorable Explanations* such as this Mandelbrot Explorer.
+

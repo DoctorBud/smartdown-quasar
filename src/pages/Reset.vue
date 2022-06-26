@@ -29,7 +29,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { deleteAllNotes, loadGalleryNotes } from 'src/helper';
+import { deleteAllNotes, loadGalleryNotes } from 'src/composables/notes';
 import { useRouter } from 'vue-router';
 
 import Container from 'src/components/Container.vue';

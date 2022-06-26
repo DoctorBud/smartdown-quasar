@@ -16,3 +16,22 @@
 .background {
 	background-color: lavender;
 }
+
+.toolbar-transparent {
+  background: transparent !important;
+  border: none !important;
+}
+
+.toolbar-hidden {
+	display: none;
+}
+
+.toolbar-fade {
+	opacity: 0;
+  transition: opacity 2s;
+}
+
+.toolbar-fade:hover {
+	opacity: 1;
+  transition: opacity 1s;
+}
