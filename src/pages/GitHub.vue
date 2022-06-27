@@ -153,7 +153,7 @@ import { useRouter } from 'vue-router';
 import { Octokit } from '@octokit/core';
 
 import Container from 'src/components/Container.vue';
-import { useLocalNotes } from 'src/helper';
+import { useLocalNotes } from 'src/composables/notes';
 
 export default defineComponent({
   components: { Container },

@@ -16,7 +16,7 @@
 <script>
 import Container from 'src/components/Container.vue';
 import NoteCard from 'src/components/NoteCard.vue';
-import { useLocalNotes } from 'src/helper';
+import { useLocalNotes } from 'src/composables/notes';
 import { defineComponent, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -32,7 +32,11 @@ export default defineComponent({
 
     const notes = useLocalNotes();
     const router = useRouter();
-    return { note, router, notes };
+    return {
+      note,
+      router,
+      notes,
+    };
   },
 });
 </script>

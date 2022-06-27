@@ -2,24 +2,32 @@
   <q-page>
     <Container>
       <div
-        v-if="editMode.editing">
-        <Editor
-          v-if="!editMode.source"
-          class="full-width edit-border"
-          v-model="note.content" />
+        v-if="note">
+        <div
+          v-if="editMode.editing">
+          <Editor
+            v-if="!editMode.source"
+            class="full-width edit-border"
+            v-model="note.content" />
 
-        <SourceEditor
-          v-else
-          class="full-width edit-border"
-          v-model="note.content" />
+          <SourceEditor
+            v-else
+            class="full-width edit-border"
+            v-model="note.content" />
+        </div>
+
+        <div
+          v-else>
+          <smartdown
+            class="q-mt-md q-pa-sm readonly-border"
+            :initInput="note.content">
+          </smartdown>
+        </div>
       </div>
 
       <div
         v-else>
-        <smartdown
-          class="q-mt-md q-pa-sm readonly-border"
-          :initInput="note.content">
-        </smartdown>
+        <h1>Missing Note</h1>
       </div>
     </Container>
   </q-page>
@@ -28,7 +36,7 @@
 <script>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { useLocalNotes } from 'src/helper';
+import { useLocalNotes } from 'src/composables/notes';
 import { useStore } from 'src/composables/store';
 
 import Editor from 'src/components/Editor.vue';
@@ -47,7 +55,9 @@ export default {
     const notes = useLocalNotes();
     const route = useRoute();
     const noteId = computed(() => parseInt(route.params.id, 10));
-    const note = computed(() => notes.value[noteId.value]);
+    const note = computed(() => (noteId.value >= 0
+      ? notes.value[noteId.value]
+      : null));
 
     const store = useStore();
     const editMode = computed({

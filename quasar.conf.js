@@ -58,7 +58,7 @@ module.exports = configure((ctx) => ({
 
     env: {
       packageVersion,
-      foo: 'FOO',
+      GALLERY_DEV_MODE: process.env.GALLERY_DEV_MODE || false,
     },
 
     // Add dependencies for transpiling with Babel (Array of string/regex)

@@ -1,15 +1,5 @@
 [
   {
-    "title": "Flanker",
-    "description": "Flanker",
-    "filename": "JSPsych/Flanker.md"
-  },
-  {
-    "title": "Mode Meter",
-    "description": "Mode Meter",
-    "filename": "ModeMeter.md"
-  },
-  {
     "title": "Simple Markdown",
     "description": "Simple Markdown",
     "filename": "Markdown.md"
@@ -18,6 +8,11 @@
     "title": "Simple Smartdown",
     "description": "Simple Smartdown",
     "filename": "Smartdown.md"
+  },
+  {
+    "title": "SQ - SmartdownQuasar",
+    "description": "SQ - SmartdownQuasar",
+    "filename": "SQ.md"
   },
   {
     "title": "P5JS Ellipse",
@@ -43,6 +38,16 @@
     "title": "JSPsych",
     "description": "JSPsych",
     "filename": "JSPsych.md"
+  },
+  {
+    "title": "Flanker",
+    "description": "Flanker",
+    "filename": "JSPsych/Flanker.md"
+  },
+  {
+    "title": "Mode Meter",
+    "description": "Mode Meter",
+    "filename": "ModeMeter.md"
   },
   {
     "title": "Julia Set",
