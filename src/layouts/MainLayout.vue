@@ -168,7 +168,12 @@ import {
   watch,
 } from 'vue';
 import { useStore } from 'src/composables/store';
-import { useLocalNotes } from 'src/composables/notes';
+import {
+  lookupNoteByIndex,
+  removeNoteByIndex,
+  useLocalNotes,
+  addNote,
+} from 'src/composables/notes';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -185,7 +190,10 @@ export default defineComponent({
     const uploadedNote = ref(null);
     const uploadedNoteText = ref('');
 
-    const note = computed(() => store.getNote.value);
+    // const note = computed(() => store.getNote.value);
+    const note = computed(() => (route.path.startsWith('/note/')
+      ? lookupNoteByIndex(parseInt(route.params.id, 10))
+      : null));
     const editMode = computed({
       get: () => store.getEditMode.value,
       set: store.updateEditMode,
@@ -212,17 +220,14 @@ export default defineComponent({
       { deep: true },
     );
 
-    const noteId = computed(() => parseInt(route.params.id, 10));
     const confirm = ref(false);
     const router = useRouter();
     const remove = () => {
-      const notes = useLocalNotes();
-      notes.value.splice(noteId.value, 1);
+      removeNoteByIndex(parseInt(route.params.id, 10));
       router.push('/');
     };
 
-    const newNote = () => {
-      const notes = useLocalNotes();
+    const newNote = async () => {
       const now = new Date();
       const nowTitle = now.toLocaleString('en-us');
 
@@ -232,12 +237,13 @@ export default defineComponent({
         content: '',
       });
 
-      const idx = notes.value.length;
-      notes.value.push({
+      const noteData = {
         ...notex,
         createdAt: now,
         updatedAt: now,
-      });
+      };
+      const addedNote = await addNote(noteData);
+      const idx = addedNote.index;
 
       editMode.value.detailed = true;
       editMode.value.editing = true;
@@ -254,7 +260,11 @@ export default defineComponent({
       const now = new Date();
       const nowTitle = now.toLocaleString('en-us');
 
-      const title = `${uploadedNote.value.name}`;
+      const noteName = uploadedNote.value.name;
+      const noteNameWithoutExtension = noteName.endsWith('.md')
+        ? noteName.split('.').slice(0, -1).join('.')
+        : noteName;
+      const title = `${noteNameWithoutExtension}`;
       const description = `File imported from ${uploadedNote.value.name} at ${nowTitle}`;
       uploadedNote.value = null;
 
@@ -277,9 +287,9 @@ export default defineComponent({
     };
 
     const goToExport = () => {
-      const id = noteId.value;
+      const id = note.value.index;
 
-      if (id) {
+      if (id >= 0) {
         router.push(`/export/${id}`);
       } else {
         router.push('/export/all');
@@ -342,8 +352,12 @@ export default defineComponent({
     ];
 
     watch(
-      () => route.params.id,
+      () => route.path,
       async () => {
+        if (!route.path.startsWith('/note/')) {
+          editMode.value.editing = false;
+          editMode.value.detailed = false;
+        }
         SQ.setToolbarVisibility(true);
         SQ.setToolbarTransparency(false);
         SQ.setToolbarFade(false);

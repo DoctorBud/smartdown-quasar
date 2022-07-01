@@ -36,7 +36,7 @@
 <script>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { useLocalNotes } from 'src/composables/notes';
+import { lookupNoteByIndex } from 'src/composables/notes';
 import { useStore } from 'src/composables/store';
 
 import Editor from 'src/components/Editor.vue';
@@ -52,13 +52,8 @@ export default {
     SourceEditor,
   },
   setup() {
-    const notes = useLocalNotes();
     const route = useRoute();
-    const noteId = computed(() => parseInt(route.params.id, 10));
-    const note = computed(() => (noteId.value >= 0
-      ? notes.value[noteId.value]
-      : null));
-
+    const note = computed(() => lookupNoteByIndex(parseInt(route.params.id, 10)));
     const store = useStore();
     const editMode = computed({
       get: () => store.getEditMode.value,

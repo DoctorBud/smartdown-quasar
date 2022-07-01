@@ -1,57 +1,46 @@
 [
   {
-    "title": "Simple Markdown",
-    "description": "Simple Markdown",
-    "filename": "Markdown.md"
+    "title": "Markdown",
+    "description": "Simple Markdown"
   },
   {
-    "title": "Simple Smartdown",
-    "description": "Simple Smartdown",
-    "filename": "Smartdown.md"
+    "title": "Smartdown",
+    "description": "Simple Smartdown"
   },
   {
-    "title": "SQ - SmartdownQuasar",
-    "description": "SQ - SmartdownQuasar",
-    "filename": "SQ.md"
+    "title": "SQ",
+    "description": "SQ - SmartdownQuasar"
   },
   {
-    "title": "P5JS Ellipse",
-    "description": "Ellipse",
-    "filename": "Ellipse.md"
+    "title": "Ellipse",
+    "description": "P5JS Ellipse"
   },
   {
     "title": "Mandelbrot",
-    "description": "Mandelbrot",
-    "filename": "Mandelbrot.md"
+    "description": "Mandelbrot"
   },
   {
-    "title": "P5JS Mobius",
-    "description": "P5JS Mobius",
-    "filename": "Mobius.md"
+    "title": "Mobius",
+    "description": "P5JS Mobius"
   },
   {
-    "title": "Pong Game",
-    "description": "Pong Game adapted from https://kellylougheed.medium.com/javascript-pong-with-p5-js-3ae1b859418c",
-    "filename": "Pong.md"
+    "title": "Pong",
+    "description": "Pong Game adapted from https://kellylougheed.medium.com/javascript-pong-with-p5-js-3ae1b859418c"
   },
   {
     "title": "JSPsych",
-    "description": "JSPsych",
-    "filename": "JSPsych.md"
+    "description": "JSPsych"
   },
   {
-    "title": "Flanker",
-    "description": "Flanker",
-    "filename": "JSPsych/Flanker.md"
+    "title": "JSPsych/Flanker",
+    "description": "Flanker"
   },
   {
-    "title": "Mode Meter",
-    "description": "Mode Meter",
-    "filename": "ModeMeter.md"
+    "title": "ModeMeter",
+    "description": "Mode Meter"
   },
   {
-    "title": "Julia Set",
-    "description": "randomly generated fractals",
-    "filename": "fractal.md"
+    "title": "JuliaSet",
+    "description": "Randomly generated Julia Set fractals"
   }
 ]

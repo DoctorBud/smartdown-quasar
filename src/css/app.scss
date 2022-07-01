@@ -5,6 +5,23 @@
   width: 100%;
 }
 
+.smartdown-container
+.playable-wrapper-wrapper
+.playable-wrapper.playable-playing
+button.kiosk-button
+{
+	opacity: 0;
+  transition: opacity 5s;
+}
+
+.smartdown-container
+.playable-wrapper-wrapper
+.playable-wrapper.playable-playing
+button.kiosk-button:hover {
+	opacity: 1;
+  transition: opacity 2s;
+}
+
 .readonly-border {
 	margin: 0;
 	padding: 0;

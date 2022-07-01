@@ -27,7 +27,7 @@ export async function getGalleryNotes() {
   /* eslint-disable-next-line no-restricted-syntax */
   for (const entry of index) {
     /* eslint-disable-next-line no-await-in-loop */ // https://eslint.org/docs/rules/no-await-in-loop
-    const content = await (await fetch(`gallery/${entry.filename}`)).text();
+    const content = await (await fetch(`gallery/${entry.title}.md`)).text();
     entry.content = content;
     entry.createdAt = Date.now();
     entry.updatedAt = entry.createdAt;
@@ -44,10 +44,37 @@ export async function deleteAllNotes() {
   notes.value.splice(0);
 }
 
+export async function addNote(noteData, notes = useLocalNotes()) {
+  const result = {
+    ...noteData,
+    index: notes.value.length,
+  };
+  notes.value.push(result);
+
+  return result;
+}
+
 export async function loadGalleryNotes() {
   const notes = useLocalNotes();
-
   const newNotes = await getGalleryNotes();
 
-  notes.value.push(...newNotes);
+  newNotes.forEach((newNote) => {
+    addNote(newNote, notes);
+  });
+}
+
+export function lookupNoteByIndex(lookupIndex) {
+  const notes = useLocalNotes().value;
+  const result = notes.find((note, index) => index === lookupIndex);
+  if (result) {
+    result.index = lookupIndex;
+  }
+
+  return result;
+}
+
+export function removeNoteByIndex(lookupIndex) {
+  const notes = useLocalNotes().value;
+
+  notes.splice(lookupIndex, 1);
 }
