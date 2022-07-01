@@ -43,19 +43,19 @@ import { exportFile, Platform } from 'quasar';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 import Container from 'src/components/Container.vue';
-import { useLocalNotes } from 'src/composables/notes';
+import { lookupNoteByIndex } from 'src/composables/notes';
 
 export default defineComponent({
   components: { Container },
   name: 'Export',
   setup() {
-    const notes = useLocalNotes();
     const route = useRoute();
-    const noteId = computed(() => parseInt(route.params.id, 10));
-    const note = computed(() => notes.value[noteId.value]);
+    const note = computed(() => lookupNoteByIndex(parseInt(route.params.id, 10)));
 
     const exportCurrentNote = async () => {
-      const outputFilename = `${note.value.title}.md`;
+      const { title } = note.value;
+      const extension = title.endsWith('.md') ? '' : '.md';
+      const outputFilename = `${title}${extension}`;
       const outputText = note.value.content;
 
       if (Platform.is.capacitor) {

@@ -159,11 +159,10 @@ export default defineComponent({
   components: { Container },
   name: 'GitHub',
   setup() {
-    console.log('GitHub.setup()');
     const confirm = ref(false);
 
     const githubUsername = ref('OddCutOrb');
-    const githubToken = ref('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');
+    const githubToken = ref('');
 
     const loggedIn = ref(false);
 
@@ -173,15 +172,11 @@ export default defineComponent({
     const router = useRouter();
 
     const getGists = async () => {
-      console.log('#getGists');
-
       const octokit = new Octokit({
         // auth: githubToken.value,
       });
       const githubGists = await octokit.request(`GET /users/${githubUsername.value}/gists`, {});
-      console.log('githubGists', githubGists.data);
 
-      // gists.value = githubGists.data;
       gists.value = githubGists.data.map((gist) => ({
         ...gist,
         expanded: true,
@@ -207,8 +202,6 @@ export default defineComponent({
     };
 
     const loadGistFile = async (filename, url) => {
-      console.log('#loadGistFile', filename, url);
-
       /*
         // For some reason, octokit.request fails in Safari and Firefox
         // with a 403 CORS-related error. Interestingly, Chrome appears
@@ -229,11 +222,9 @@ export default defineComponent({
     };
 
     const previewGistFile = async (gist, file) => {
-      const gistName = gist.name;
+      // const gistName = gist.name;
       const { filename } = file;
       const url = file.raw_url;
-
-      console.log('#previewGistFile', gistName, filename, url);
 
       const text = await loadGistFile(filename, url);
       previewText.value = await text;
@@ -245,13 +236,14 @@ export default defineComponent({
       const { filename } = file;
       const url = file.raw_url;
 
-      console.log('#importGistFile', gistName, filename, url);
       const content = await loadGistFile(filename, url);
-      console.log('#import ', filename, content);
 
       const notes = useLocalNotes();
       const now = new Date();
-      const title = `${gist.owner.login}: ${gistName}/${filename}`;
+      const filenameWithoutExtension = filename.endsWith('.md')
+        ? filename.split('.').slice(0, -1).join('.')
+        : filename;
+      const title = `${gist.owner.login}_${gistName}/${filenameWithoutExtension}`;
       const description = `GitHub Gist imported from ${gist.html_url}`;
 
       let newIndex = notes.value.length;
