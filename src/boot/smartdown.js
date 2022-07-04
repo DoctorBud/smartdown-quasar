@@ -53,8 +53,8 @@ export default async (/* { app } */) => {
     },
   ];
 
-  const baseURL = window.publicFolder || '/';
-
+  const smartdownPrefix = process.env.SMARTDOWN_PREFIX || '';
+  const baseURL = window.publicFolder || `${smartdownPrefix}/`;
   const resultPromise = new Promise((resolve) => {
     smartdown.initialize(
       icons,

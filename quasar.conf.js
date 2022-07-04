@@ -49,16 +49,21 @@ module.exports = configure((ctx) => ({
     'material-icons', // optional, you are not bound to it
   ],
 
+  htmlVariables: {
+    smartdownPrefix: process.env.SMARTDOWN_PREFIX || '',
+  },
+
   // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
   build: {
-    vueRouterMode: 'hash', // available values: 'hash', 'history'
+    vueRouterMode: 'history', // available values: 'hash', 'history'
 
     // transpile: false,
-    // publicPath: '/',
+    publicPath: 'smartdown-quasar/',
 
     env: {
       packageVersion,
       GALLERY_DEV_MODE: process.env.GALLERY_DEV_MODE || false,
+      SMARTDOWN_PREFIX: process.env.SMARTDOWN_PREFIX || '',
     },
 
     // Add dependencies for transpiling with Babel (Array of string/regex)

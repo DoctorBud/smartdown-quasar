@@ -322,7 +322,7 @@ export default defineComponent({
       {
         title: 'GitHub',
         caption: 'Login to GitHub',
-        icon: 'img:/img/Octocat.png',
+        icon: 'img:img/Octocat.png',
         to: '/github',
       },
       {
@@ -334,13 +334,13 @@ export default defineComponent({
       {
         title: 'Smartdown Site',
         caption: 'smartdown.io',
-        icon: 'img:/img/favicon-128x128.png',
+        icon: 'img:img/favicon-128x128.png',
         link: 'https://smartdown.io',
       },
       {
         title: 'Smartdown Gallery',
         caption: 'smartdown.site',
-        icon: 'img:/img/favicon-128x128.png',
+        icon: 'img:img/favicon-128x128.png',
         link: 'https://smartdown.site',
       },
       {
@@ -361,6 +361,8 @@ export default defineComponent({
         SQ.setToolbarVisibility(true);
         SQ.setToolbarTransparency(false);
         SQ.setToolbarFade(false);
+        const url = new URL(window.location.href);
+        window.history.replaceState(null, null, url);
       },
     );
 

@@ -5,10 +5,11 @@
 
 REMOTE=`git remote get-url --push origin`
 rm -rf dist/spa
-npm run build
+SMARTDOWN_PREFIX=/smartdown-quasar GALLERY_DEV_MODE=1 npm run build
 mkdir /tmp/publishSQ
 cp -r dist/spa/ /tmp/publishSQ/
 cd /tmp/publishSQ/
+cp index.html 404.html
 ls -l
 git init
 git add .
