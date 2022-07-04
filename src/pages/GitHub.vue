@@ -3,7 +3,7 @@
     <Container>
       <h3>
         <q-img
-          src="/img/Octocat.png"
+          src="img/Octocat.png"
           style="max-width: 100px"
         />
         GitHub
