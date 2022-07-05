@@ -73,6 +73,13 @@ export function lookupNoteByIndex(lookupIndex) {
   return result;
 }
 
+export function lookupNoteByTitle(lookupTitle) {
+  const notes = useLocalNotes().value;
+  const result = notes.find((note) => note.title === lookupTitle);
+
+  return result;
+}
+
 export function removeNoteByIndex(lookupIndex) {
   const notes = useLocalNotes().value;
 

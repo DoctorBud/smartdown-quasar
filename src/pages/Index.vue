@@ -2,11 +2,11 @@
   <q-page padding>
     <Container>
       <NoteCard
-        v-for="({ title, description, index }, idx) in notes.slice().reverse()"
+        v-for="({ title, description }, idx) in notes.slice().reverse()"
         :key="idx"
         :title="title"
         :description="description"
-        @click="router.push(`/note/${index}`)"
+        @click="router.push(`/note/${title}`)"
       />
       <div v-if="notes.length === 0">You have not created any notes.</div>
     </Container>

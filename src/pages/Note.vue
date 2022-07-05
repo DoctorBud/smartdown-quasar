@@ -36,7 +36,7 @@
 <script>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { lookupNoteByIndex } from 'src/composables/notes';
+import { lookupNoteByTitle } from 'src/composables/notes';
 import { useStore } from 'src/composables/store';
 
 import Editor from 'src/components/Editor.vue';
@@ -53,7 +53,7 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const note = computed(() => lookupNoteByIndex(parseInt(route.params.id, 10)));
+    const note = computed(() => lookupNoteByTitle(route.params.id));
     const store = useStore();
     const editMode = computed({
       get: () => store.getEditMode.value,

@@ -153,7 +153,7 @@ import { useRouter } from 'vue-router';
 import { Octokit } from '@octokit/core';
 
 import Container from 'src/components/Container.vue';
-import { useLocalNotes } from 'src/composables/notes';
+import { lookupNoteByTitle, addNote } from 'src/composables/notes';
 
 export default defineComponent({
   components: { Container },
@@ -238,28 +238,17 @@ export default defineComponent({
 
       const content = await loadGistFile(filename, url);
 
-      const notes = useLocalNotes();
+      // const notes = useLocalNotes();
       const now = new Date();
       const filenameWithoutExtension = filename.endsWith('.md')
         ? filename.split('.').slice(0, -1).join('.')
         : filename;
-      const title = `${gist.owner.login}_${gistName}/${filenameWithoutExtension}`;
+      const title = `${gist.owner.login}/${gistName}/${filenameWithoutExtension}`;
       const description = `GitHub Gist imported from ${gist.html_url}`;
 
-      let newIndex = notes.value.length;
-      let foundIndex;
-
-      for (let index = 0; index < newIndex; index += 1) {
-        if (notes.value[index].title === title) {
-          foundIndex = index;
-          break;
-        }
-      }
-
-      if (foundIndex > -1) {
-        newIndex = foundIndex;
-        const foundNote = notes.value[foundIndex];
-        foundNote.content = content;
+      const oldNote = lookupNoteByTitle(title);
+      if (oldNote) {
+        oldNote.content = content;
       } else {
         const notex = reactive({
           title,
@@ -267,14 +256,15 @@ export default defineComponent({
           content,
         });
 
-        notes.value.push({
+        const noteData = {
           ...notex,
           createdAt: now,
           updatedAt: now,
-        });
+        };
+        await addNote(noteData);
       }
 
-      router.push(`/note/${newIndex}`);
+      router.push(`/note/${title}`);
     };
 
     const cancel = () => {

@@ -14,6 +14,8 @@ const { configure } = require('quasar/wrappers');
 
 const packageVersion = require('./package.json').version;
 
+const smartdownPrefix = process.env.SMARTDOWN_PREFIX || '';
+
 module.exports = configure((ctx) => ({
   // https://quasar.dev/quasar-cli/supporting-ts
   supportTS: false,
@@ -50,7 +52,7 @@ module.exports = configure((ctx) => ({
   ],
 
   htmlVariables: {
-    smartdownPrefix: process.env.SMARTDOWN_PREFIX || '',
+    smartdownPrefix,
   },
 
   // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
@@ -58,12 +60,12 @@ module.exports = configure((ctx) => ({
     vueRouterMode: 'history', // available values: 'hash', 'history'
 
     // transpile: false,
-    publicPath: 'smartdown-quasar/',
+    publicPath: `${smartdownPrefix}/`,
 
     env: {
       packageVersion,
       GALLERY_DEV_MODE: process.env.GALLERY_DEV_MODE || false,
-      SMARTDOWN_PREFIX: process.env.SMARTDOWN_PREFIX || '',
+      SMARTDOWN_PREFIX: smartdownPrefix,
     },
 
     // Add dependencies for transpiling with Babel (Array of string/regex)
