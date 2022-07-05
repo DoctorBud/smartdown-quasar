@@ -169,9 +169,8 @@ import {
 } from 'vue';
 import { useStore } from 'src/composables/store';
 import {
-  lookupNoteByIndex,
+  lookupNoteByTitle,
   removeNoteByIndex,
-  useLocalNotes,
   addNote,
 } from 'src/composables/notes';
 
@@ -192,7 +191,7 @@ export default defineComponent({
 
     // const note = computed(() => store.getNote.value);
     const note = computed(() => (route.path.startsWith('/note/')
-      ? lookupNoteByIndex(parseInt(route.params.id, 10))
+      ? lookupNoteByTitle(route.params.id)
       : null));
     const editMode = computed({
       get: () => store.getEditMode.value,
@@ -242,12 +241,11 @@ export default defineComponent({
         createdAt: now,
         updatedAt: now,
       };
-      const addedNote = await addNote(noteData);
-      const idx = addedNote.index;
+      await addNote(noteData);
 
       editMode.value.detailed = true;
       editMode.value.editing = true;
-      router.push(`/note/${idx}`);
+      router.push(`/note/${noteData.title}`);
     };
 
     const uploadedNoteChanged = async () => {
@@ -256,7 +254,7 @@ export default defineComponent({
       const content = await blob.text();
       uploadedNoteText.value = content;
 
-      const notes = useLocalNotes();
+      // const notes = useLocalNotes();
       const now = new Date();
       const nowTitle = now.toLocaleString('en-us');
 
@@ -264,7 +262,7 @@ export default defineComponent({
       const noteNameWithoutExtension = noteName.endsWith('.md')
         ? noteName.split('.').slice(0, -1).join('.')
         : noteName;
-      const title = `${noteNameWithoutExtension}`;
+      const title = `${noteNameWithoutExtension.replaceAll('__', '/')}`;
       const description = `File imported from ${uploadedNote.value.name} at ${nowTitle}`;
       uploadedNote.value = null;
 
@@ -274,23 +272,18 @@ export default defineComponent({
         content,
       });
 
-      const idx = notes.value.length;
-      notes.value.push({
-        ...notex,
-        createdAt: now,
-        updatedAt: now,
-      });
+      await addNote(notex);
 
       editMode.value.editing = false;
       editMode.value.detailed = true;
-      router.push(`/note/${idx}`);
+      router.push(`/note/${notex.title}`);
     };
 
     const goToExport = () => {
       const id = note.value.index;
 
       if (id >= 0) {
-        router.push(`/export/${id}`);
+        router.push(`/export/${note.value.title}`);
       } else {
         router.push('/export/all');
       }
@@ -362,7 +355,7 @@ export default defineComponent({
         SQ.setToolbarTransparency(false);
         SQ.setToolbarFade(false);
         const url = new URL(window.location.href);
-        window.history.replaceState(null, null, url);
+        window.history.replaceState(window.history.state, null, url);
       },
     );
 
