@@ -10,67 +10,43 @@ import {
 export const initStore = () => {
   // State
   const state = reactive({
-    name: 'Bob Day',
-    email: 'bob@martianmovers.com',
-    note: null,
     editMode: {
       editing: false,
       detailed: false,
       source: false,
     },
+    note: null,
   });
 
   // Getters
-  const getUsername = computed(() => state.name);
-  const getEmail = computed(() => state.email);
-  const getNote = computed(() => state.note);
   const getEditMode = computed(() => state.editMode);
+  const getNote = computed(() => state.note);
 
   // Mutations
-  const setUsername = (name) => {
-    state.name = name;
-  };
-  const setEmail = (email) => {
-    state.email = email;
+  const setEditMode = (editMode) => {
+    state.editMode = editMode;
   };
   const setNote = (note) => {
     state.note = note;
   };
-  const setEditMode = (editMode) => {
-    state.editMode = editMode;
-  };
 
   // Actions
-  const updateUsername = (name) => {
-    setUsername(name);
-  };
-  const updateEmail = (email) => {
-    setEmail(email);
+  const updateEditMode = (editMode) => {
+    setEditMode(editMode);
   };
   const updateNote = (note) => {
     setNote(note);
   };
-  const updateEditMode = (editMode) => {
-    setEditMode(editMode);
-  };
 
-  provide('getUsername', getUsername);
-  provide('getEmail', getEmail);
   provide('getEditMode', getEditMode);
-  provide('getNote', getNote);
-  provide('updateUsername', updateUsername);
-  provide('updateEmail', updateEmail);
-  provide('updateNote', updateNote);
   provide('updateEditMode', updateEditMode);
+  provide('getNote', getNote);
+  provide('updateNote', updateNote);
 };
 
 export const useStore = () => ({
-  getUsername: inject('getUsername'),
-  getEmail: inject('getEmail'),
-  getNote: inject('getNote'),
   getEditMode: inject('getEditMode'),
-  updateUsername: inject('updateUsername'),
-  updateEmail: inject('updateEmail'),
-  updateNote: inject('updateNote'),
   updateEditMode: inject('updateEditMode'),
+  getNote: inject('getNote'),
+  updateNote: inject('updateNote'),
 });

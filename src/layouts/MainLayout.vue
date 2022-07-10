@@ -2,7 +2,6 @@
   <q-layout
     class="background"
     view="hHh lpR fFf">
-
     <q-drawer
       v-model="leftDrawerOpen"
       show-if-above
@@ -34,7 +33,13 @@
       </q-card>
     </q-dialog>
 
-    <q-page-container>
+    <div
+      v-if="error">
+      <h3>Error</h3>
+      <p>{{ error }}</p>
+    </div>
+
+    <q-page-container v-else>
       <router-view />
     </q-page-container>
 
@@ -51,8 +56,9 @@
           <div
             v-if="editMode.editing">
             <q-input
-              v-model="note.title"
+              v-model="draftNewTitle"
               label="Title" filled
+              ref="draftNewTitleRef"
             />
             <q-input
               v-model="note.description"
@@ -164,14 +170,15 @@ import {
   defineComponent,
   ref,
   computed,
-  reactive,
   watch,
+  onBeforeMount,
 } from 'vue';
 import { useStore } from 'src/composables/store';
 import {
-  lookupNoteByTitle,
-  removeNoteByIndex,
+  removeNoteByTitle,
   addNote,
+  loadNoteByTitle,
+  lookupGalleryNote,
 } from 'src/composables/notes';
 
 export default defineComponent({
@@ -188,63 +195,40 @@ export default defineComponent({
     const store = useStore();
     const uploadedNote = ref(null);
     const uploadedNoteText = ref('');
+    const draftNewTitle = ref('');
+    const draftNewTitleRef = ref(null);
+    const error = ref(null);
+    const newNoteCreated = ref(false);
 
-    // const note = computed(() => store.getNote.value);
-    const note = computed(() => (route.path.startsWith('/note/')
-      ? lookupNoteByTitle(route.params.id)
-      : null));
+    const note = ref(null);
     const editMode = computed({
       get: () => store.getEditMode.value,
       set: store.updateEditMode,
     });
 
-    //
-    // This seems hacky, but it gets the job done:
-    //  If the user clicks the Markdown toggle to ON,
-    //  then enable Edit mode.
-    // This article:
-    //  https://www.netlify.com/blog/2021/01/29/deep-dive-into-the-vue-composition-apis-watch-method/
-    // suggests (look for 'Nested objects/arrays') using lodash to clone objects so that old vs new is detectable.
-    // The below hack is way simpler.
-    //
-    let oldSource = editMode.value.source;
-    watch(
-      editMode,
-      () => {
-        if (editMode.value.source && !oldSource) {
-          editMode.value.editing = true;
-        }
-        oldSource = editMode.value.source;
-      },
-      { deep: true },
-    );
-
     const confirm = ref(false);
     const router = useRouter();
     const remove = () => {
-      removeNoteByIndex(parseInt(route.params.id, 10));
+      removeNoteByTitle(route.params.id);
       router.push('/');
     };
 
-    const newNote = async () => {
+    const newNote = () => {
       const now = new Date();
       const nowTitle = now.toLocaleString('en-us');
-
-      const notex = reactive({
-        title: nowTitle,
-        description: '',
-        content: '',
-      });
+      const title = `Untitled ${nowTitle}`;
 
       const noteData = {
-        ...notex,
+        title,
+        description: '',
+        content: '',
         createdAt: now,
         updatedAt: now,
       };
-      await addNote(noteData);
+      addNote(noteData);
 
-      editMode.value.detailed = true;
-      editMode.value.editing = true;
+      newNoteCreated.value = true;
+
       router.push(`/note/${noteData.title}`);
     };
 
@@ -254,35 +238,33 @@ export default defineComponent({
       const content = await blob.text();
       uploadedNoteText.value = content;
 
-      // const notes = useLocalNotes();
-      const now = new Date();
-      const nowTitle = now.toLocaleString('en-us');
-
       const noteName = uploadedNote.value.name;
       const noteNameWithoutExtension = noteName.endsWith('.md')
         ? noteName.split('.').slice(0, -1).join('.')
         : noteName;
-      const title = `${noteNameWithoutExtension.replaceAll('__', '/')}`;
-      const description = `File imported from ${uploadedNote.value.name} at ${nowTitle}`;
+      const title = noteNameWithoutExtension
+        .replaceAll('__', '/')
+        .replaceAll('..', ':');
+      const description = `File imported from ${uploadedNote.value.name} at ${title}`;
       uploadedNote.value = null;
 
-      const notex = reactive({
+      const noteData = {
         title,
         description,
         content,
-      });
+      };
 
-      await addNote(notex);
+      addNote(noteData);
 
-      editMode.value.editing = false;
-      editMode.value.detailed = true;
-      router.push(`/note/${notex.title}`);
+      setTimeout(() => {
+        editMode.value.editing = false;
+        editMode.value.detailed = true;
+      }, 1);
+      router.push(`/note/${noteData.title}`);
     };
 
     const goToExport = () => {
-      const id = note.value.index;
-
-      if (id >= 0) {
+      if (note.value) {
         router.push(`/export/${note.value.title}`);
       } else {
         router.push('/export/all');
@@ -344,18 +326,82 @@ export default defineComponent({
       },
     ];
 
+    function unloadNote() {
+      note.value = null;
+      store.updateNote(null);
+    }
+
+    function loadNote(title) {
+      if (title) {
+        const foundNote = loadNoteByTitle(title);
+        error.value = null;
+        if (foundNote) {
+          note.value = foundNote;
+          store.updateNote(note);
+          draftNewTitle.value = note.value.title;
+        } else {
+          const galleryNote = lookupGalleryNote(title);
+
+          if (galleryNote) {
+            addNote(galleryNote);
+            note.value = loadNoteByTitle(title);
+            store.updateNote(note);
+            draftNewTitle.value = note.value.title;
+          } else {
+            error.value = `Note not found: ${title}`;
+          }
+        }
+      }
+    }
+
+    onBeforeMount(() => {
+      const title = route.params.id;
+      if (title) {
+        loadNote(title);
+      } else {
+        unloadNote();
+      }
+    });
+
     watch(
       () => route.path,
-      async () => {
-        if (!route.path.startsWith('/note/')) {
-          editMode.value.editing = false;
-          editMode.value.detailed = false;
-        }
+      () => {
         SQ.setToolbarVisibility(true);
         SQ.setToolbarTransparency(false);
         SQ.setToolbarFade(false);
+
         const url = new URL(window.location.href);
         window.history.replaceState(window.history.state, null, url);
+
+        if (route.params.id) {
+          loadNote(route.params.id);
+          editMode.value.editing = editMode.value.editing || newNoteCreated.value;
+          editMode.value.detailed = editMode.value.detailed || newNoteCreated.value;
+          newNoteCreated.value = false;
+        } else {
+          editMode.value.editing = false;
+          editMode.value.detailed = false;
+          unloadNote();
+        }
+      },
+    );
+
+    const waitTimeForBookmark = 500;
+    let bookmarkTimeout = null;
+
+    watch(
+      () => draftNewTitle.value,
+      () => {
+        window.clearTimeout(bookmarkTimeout);
+        bookmarkTimeout = window.setTimeout(() => {
+          if (draftNewTitleRef.value) {
+            note.value.title = draftNewTitle.value;
+            router.replace(`/note/${draftNewTitle.value}`);
+            // setTimeout(() => {
+            //   draftNewTitleRef.value.focus();
+            // }, 1);
+          }
+        }, waitTimeForBookmark);
       },
     );
 
@@ -366,7 +412,10 @@ export default defineComponent({
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
+      error,
       note,
+      draftNewTitle,
+      draftNewTitleRef,
       editMode,
       confirm,
       remove,

@@ -2,6 +2,7 @@ import {
   ref,
   watch,
 } from 'vue';
+import { structuredClone } from 'core-js';
 
 const useLocalStorage = (key, defaultValue) => {
   const value = ref(defaultValue);
@@ -21,67 +22,65 @@ const useLocalStorage = (key, defaultValue) => {
   return value;
 };
 
-export async function getGalleryNotes() {
-  const index = await (await fetch('gallery/index.json')).json();
+let galleryNotes = null;
+export async function prefetchGalleryNotes() {
+  galleryNotes = await (await fetch('gallery/index.json')).json();
 
   /* eslint-disable-next-line no-restricted-syntax */
-  for (const entry of index) {
+  for (const entry of galleryNotes) {
     /* eslint-disable-next-line no-await-in-loop */ // https://eslint.org/docs/rules/no-await-in-loop
     const content = await (await fetch(`gallery/${entry.title}.md`)).text();
     entry.content = content;
     entry.createdAt = Date.now();
     entry.updatedAt = entry.createdAt;
   }
+}
 
-  return index;
+export function lookupGalleryNote(title) {
+  let result = null;
+
+  galleryNotes.forEach((note) => {
+    if (note.title === title) {
+      result = structuredClone(note);
+    }
+  });
+
+  return result;
 }
 
 export const useLocalNotes = () => useLocalStorage('notes', []);
+const notes = useLocalNotes();
 
-export async function deleteAllNotes() {
-  const notes = await useLocalNotes();
-
+export function deleteAllNotes() {
   notes.value.splice(0);
 }
 
-export async function addNote(noteData, notes = useLocalNotes()) {
-  const result = {
-    ...noteData,
-    index: notes.value.length,
-  };
+export function addNote(noteData) {
+  const result = noteData;
   notes.value.push(result);
 
   return result;
 }
 
-export async function loadGalleryNotes() {
-  const notes = useLocalNotes();
-  const newNotes = await getGalleryNotes();
+export function loadGalleryNotes() {
+  const newNotes = structuredClone(galleryNotes);
 
-  newNotes.forEach((newNote) => {
-    addNote(newNote, notes);
-  });
+  notes.value.push(...newNotes);
 }
 
-export function lookupNoteByIndex(lookupIndex) {
-  const notes = useLocalNotes().value;
-  const result = notes.find((note, index) => index === lookupIndex);
+export function loadNoteByTitle(lookupTitle) {
+  const result = notes.value.find((note) => note.title === lookupTitle);
+
+  return result;
+}
+
+export function removeNoteByTitle(lookupTitle) {
+  const result = notes.value.find((note) => note.title === lookupTitle);
+
   if (result) {
-    result.index = lookupIndex;
+    const lookupIndex = notes.value.indexOf(result);
+    notes.value.splice(lookupIndex, 1);
+  } else {
+    console.log('removeNoteByTitle() NOT FOUND', lookupTitle);
   }
-
-  return result;
-}
-
-export function lookupNoteByTitle(lookupTitle) {
-  const notes = useLocalNotes().value;
-  const result = notes.find((note) => note.title === lookupTitle);
-
-  return result;
-}
-
-export function removeNoteByIndex(lookupIndex) {
-  const notes = useLocalNotes().value;
-
-  notes.splice(lookupIndex, 1);
 }
