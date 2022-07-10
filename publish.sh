@@ -5,7 +5,7 @@
 
 REMOTE=`git remote get-url --push origin`
 rm -rf dist/spa
-SMARTDOWN_PREFIX=/smartdown-quasar GALLERY_DEV_MODE=1 npm run build
+SMARTDOWN_PREFIX=/smartdown-quasar npm run build
 mkdir /tmp/publishSQ
 cp -r dist/spa/ /tmp/publishSQ/
 cd /tmp/publishSQ/

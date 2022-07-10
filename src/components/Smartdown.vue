@@ -30,8 +30,7 @@ export default {
   },
   setup(props) {
     const html = ref('');
-    const todo = ref(props.initInput);
-    const todoLength = ref(0);
+    const markdown = ref(props.initInput);
 
     const items = ref(['This', 'is']);
     const itemsQuantity = computed(() => items.value.length);
@@ -46,19 +45,6 @@ export default {
         currentItems.forEach((currentItem) => {
           append.value = `${currentItem} `;
         });
-      },
-      // watch Options
-      {
-        lazy: false, // immediate: true
-      },
-    );
-
-    watch(
-      // getter
-      () => todo.value.length,
-      // callback
-      (length) => {
-        todoLength.value = length;
       },
       // watch Options
       {
@@ -82,27 +68,26 @@ export default {
       const cardPath = `gallery/${SQ.cardToLoad.value}.md`;
       console.log('cardPath', cardPath);
 
-      todo.value = await (await fetch(cardPath)).text();
-      html.value = await smartdownToHTML(todo.value);
+      markdown.value = await (await fetch(cardPath)).text();
+      html.value = await smartdownToHTML(markdown.value);
       await nextTick();
       const outputDiv = document.getElementById('smartdown-output');
-      smartdown.setHome(todo.value, outputDiv, async () => {
+      smartdown.setHome(markdown.value, outputDiv, async () => {
         smartdown.startAutoplay(outputDiv);
       });
     });
 
     onMounted(async () => {
-      html.value = await smartdownToHTML(todo.value);
+      html.value = await smartdownToHTML(markdown.value);
       await nextTick();
       const outputDiv = document.getElementById('smartdown-output');
-      smartdown.setHome(todo.value, outputDiv, async () => {
+      smartdown.setHome(markdown.value, outputDiv, async () => {
         smartdown.startAutoplay(outputDiv);
       });
     });
 
     return {
-      todo,
-      todoLength,
+      markdown,
       items,
       itemsQuantity,
       append,

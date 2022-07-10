@@ -45,14 +45,13 @@ export default defineComponent({
       router.push('/');
     };
 
-    const clearNotes = async () => {
-      await deleteAllNotes();
+    const clearNotes = () => {
+      deleteAllNotes();
       router.push('/');
     };
 
-    const loadGallery = async () => {
-      // await deleteAllNotes(); // Useful to enable this when editing the gallery
-      await loadGalleryNotes();
+    const loadGallery = () => {
+      loadGalleryNotes();
       router.push('/');
     };
 

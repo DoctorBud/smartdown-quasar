@@ -6,7 +6,7 @@
 /* global smartdown */
 
 import SQ from 'src/composables/SQ';
-import { deleteAllNotes, loadGalleryNotes } from 'src/composables/notes';
+import { deleteAllNotes, loadGalleryNotes, prefetchGalleryNotes } from 'src/composables/notes';
 
 // export default async ({ app, router, store }) => {
 export default async (/* { app } */) => {
@@ -53,6 +53,13 @@ export default async (/* { app } */) => {
     },
   ];
 
+  await prefetchGalleryNotes();
+
+  if (process.env.GALLERY_DEV_MODE) {
+    deleteAllNotes();
+    loadGalleryNotes();
+  }
+
   const smartdownPrefix = process.env.SMARTDOWN_PREFIX || '';
   const baseURL = window.publicFolder || `${smartdownPrefix}/`;
   const resultPromise = new Promise((resolve) => {
@@ -60,16 +67,6 @@ export default async (/* { app } */) => {
       icons,
       baseURL,
       async () => {
-        //
-        // The following code is useful during debugging to auto-populate
-        // the notes on app restart
-        //
-
-        if (process.env.GALLERY_DEV_MODE) {
-          await deleteAllNotes();
-          await loadGalleryNotes();
-        }
-
         resolve();
       },
       cardLoader,

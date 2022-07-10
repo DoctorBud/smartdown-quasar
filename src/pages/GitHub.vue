@@ -145,15 +145,16 @@
 import {
   defineComponent,
   ref,
-  reactive,
   onMounted,
   nextTick,
+  computed,
 } from 'vue';
 import { useRouter } from 'vue-router';
 import { Octokit } from '@octokit/core';
 
 import Container from 'src/components/Container.vue';
-import { lookupNoteByTitle, addNote } from 'src/composables/notes';
+import { loadNoteByTitle, addNote } from 'src/composables/notes';
+import { useStore } from 'src/composables/store';
 
 export default defineComponent({
   components: { Container },
@@ -171,6 +172,12 @@ export default defineComponent({
     const previewText = ref('');
     const router = useRouter();
 
+    const store = useStore();
+    const editMode = computed({
+      get: () => store.getEditMode.value,
+      set: store.updateEditMode,
+    });
+
     const getGists = async () => {
       const octokit = new Octokit({
         // auth: githubToken.value,
@@ -182,23 +189,6 @@ export default defineComponent({
         expanded: true,
         name: gist.files[Object.keys(gist.files)[0]].filename,
       })).reverse();
-
-      // const refinedGists = await githubGists.data.map(async (gist) => {
-      //   const files = await gist.files;
-      //   console.log('#files', files);
-      //   const refinedFiles = await Object.keys(files).map(async (key) => {
-      //     const file = await gist.files[key];
-      //     const url = file.raw_url;
-      //     console.log('#file/url', file, url);
-      //     const text = await octokit.request(`GET ${url}`, {});
-      //     file.text = text.data;
-      //     console.log('#file.text', file.text);
-      //     return file;
-      //   });
-      //   console.log('#refinedFiles', refinedFiles);
-      //   return gist;
-      // });
-      // console.log('#refinedGists', refinedGists);
     };
 
     const loadGistFile = async (filename, url) => {
@@ -238,7 +228,6 @@ export default defineComponent({
 
       const content = await loadGistFile(filename, url);
 
-      // const notes = useLocalNotes();
       const now = new Date();
       const filenameWithoutExtension = filename.endsWith('.md')
         ? filename.split('.').slice(0, -1).join('.')
@@ -246,24 +235,21 @@ export default defineComponent({
       const title = `${gist.owner.login}/${gistName}/${filenameWithoutExtension}`;
       const description = `GitHub Gist imported from ${gist.html_url}`;
 
-      const oldNote = lookupNoteByTitle(title);
+      const oldNote = loadNoteByTitle(title);
       if (oldNote) {
         oldNote.content = content;
       } else {
-        const notex = reactive({
+        const noteData = {
           title,
           description,
           content,
-        });
-
-        const noteData = {
-          ...notex,
           createdAt: now,
           updatedAt: now,
         };
-        await addNote(noteData);
+        addNote(noteData);
       }
 
+      editMode.value.detailed = true;
       router.push(`/note/${title}`);
     };
 

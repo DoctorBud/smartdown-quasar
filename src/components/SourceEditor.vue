@@ -4,14 +4,16 @@
     class='my-prism-editor'
     v-model='currentValue'
     :highlight='highlighter'
-    line-numbers>
+    line-numbers
+    ref="prism-editor">
   </prism-editor>
   <prism-editor
     v-else
     class='my-hljs-editor hljs'
     v-model='currentValue'
     :highlight='highlighter'
-    line-numbers>
+    line-numbers
+    ref="prism-editor">
   </prism-editor>
 </template>
 
@@ -26,7 +28,6 @@ import 'prismjs/components/prism-markup';
 import 'prismjs/components/prism-markdown';
 import 'prismjs/themes/prism-tomorrow.css';
 
-// import hljs from 'highlight.js';
 import hljs from 'highlight.js/lib/common';
 import markdown from 'highlight.js/lib/languages/markdown';
 import 'highlight.js/styles/base16/tomorrow-night.css';
@@ -35,7 +36,7 @@ hljs.registerLanguage('markdown', markdown);
 
 export default {
   name: 'SourceEditor',
-  props: ['modelValue'],
+  props: ['modelValue', 'focused'],
   data() {
     return {
       lastValue: '',
@@ -47,7 +48,17 @@ export default {
     this.lastValue = this.modelValue;
     this.currentValue = this.modelValue;
   },
+  mounted() {
+    setTimeout(() => {
+      this.$refs['prism-editor'].$refs.textarea.focus();
+    }, 1);
+  },
   watch: {
+    focused(newValue) {
+      if (newValue) {
+        this.$refs['prism-editor'].$refs.textarea.focus();
+      }
+    },
     currentValue(newValue) {
       if (newValue !== this.lastValue) {
         this.lastValue = newValue;
@@ -87,22 +98,21 @@ export default {
             }
           }
 
-          /* eslint-disable no-underscore-dangle */
-
           if (trimmedBlockLanguage) {
             trimmedBlockHtml = hljs.highlight(trimmedBlock, { language: trimmedBlockLanguage });
           } else {
             trimmedBlockHtml = hljs.highlightAuto(trimmedBlock);
           }
+          /* eslint-disable-next-line no-underscore-dangle */
           const debugBlockPrefix = useDebugPrefixes ? `(?${trimmedBlockHtml._top.name})` : '';
 
           ce.innerHTML = `${debugBlockPrefix}\`\`\`${trimmedBlockHtml.value}\`\`\``;
         } else if (ceText.startsWith('`')) {
           const trimmedInline = ceText.slice(1, -1);
           const trimmedInlineHtml = hljs.highlightAuto(trimmedInline);
+          /* eslint-disable-next-line no-underscore-dangle */
           const debugInlinePrefix = useDebugPrefixes ? `(?${trimmedInlineHtml._top.name})` : '';
 
-          // console.log('trimmedInlineHtml', trimmedInlineHtml);
           ce.innerHTML = `${debugInlinePrefix}\`${trimmedInlineHtml.value}\``;
         } else {
           console.log('other', ceText);

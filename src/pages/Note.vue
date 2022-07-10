@@ -8,12 +8,14 @@
           <Editor
             v-if="!editMode.source"
             class="full-width edit-border"
-            v-model="note.content" />
+            v-model="note.content"
+            :focused="focus" />
 
           <SourceEditor
             v-else
             class="full-width edit-border"
-            v-model="note.content" />
+            v-model="note.content"
+            :focused="focus" />
         </div>
 
         <div
@@ -24,19 +26,19 @@
           </smartdown>
         </div>
       </div>
-
-      <div
-        v-else>
-        <h1>Missing Note</h1>
-      </div>
     </Container>
   </q-page>
 </template>
 
 <script>
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { lookupNoteByTitle } from 'src/composables/notes';
+/* global SQ */
+
+import {
+  computed,
+  watch,
+  ref,
+  onBeforeMount,
+} from 'vue';
 import { useStore } from 'src/composables/store';
 
 import Editor from 'src/components/Editor.vue';
@@ -52,18 +54,41 @@ export default {
     SourceEditor,
   },
   setup() {
-    const route = useRoute();
-    const note = computed(() => lookupNoteByTitle(route.params.id));
+    const focus = ref(true);
     const store = useStore();
+    const note = computed({
+      get: () => store.getNote.value,
+    });
     const editMode = computed({
       get: () => store.getEditMode.value,
       set: store.updateEditMode,
     });
 
-    store.updateNote(note);
+    onBeforeMount(() => {
+      focus.value = editMode.value.editing && !editMode.value.detailed;
+    });
+
+    let oldSource = editMode.value.source;
+    watch(
+      editMode,
+      () => {
+        if (editMode.value.source && !oldSource) {
+          editMode.value.editing = true;
+        }
+        oldSource = editMode.value.source;
+
+        if (editMode.value.editing) {
+          SQ.setToolbarVisibility(true);
+          SQ.setToolbarTransparency(false);
+          SQ.setToolbarFade(false);
+        }
+        focus.value = editMode.value.editing && !editMode.value.detailed;
+      },
+      { deep: true },
+    );
 
     return {
-      note, editMode,
+      note, editMode, focus,
     };
   },
 };

@@ -22,7 +22,7 @@ const createState = (content) => {
 
 export default {
   name: 'Editor',
-  props: ['modelValue'],
+  props: ['modelValue', 'focused'],
   data() {
     return {
       lastValue: null,
@@ -43,8 +43,14 @@ export default {
         this.$emit('update:modelValue', this.lastValue);
       },
     });
+    this.view.focus();
   },
   watch: {
+    focused(newValue) {
+      if (newValue) {
+        this.view.focus();
+      }
+    },
     modelValue(newValue) {
       if (newValue !== this.lastValue) {
         this.state = createState(newValue);
