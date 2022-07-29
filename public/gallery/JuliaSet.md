@@ -1,6 +1,3 @@
-
-
-
 ```javascript /autoplay/kiosk
 //smartdown.import=https://biodiv.github.io/contactjs/assets/js/contact.min.js
 //smartdown.import=three
