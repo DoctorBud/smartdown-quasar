@@ -137,7 +137,7 @@ export default {
     color: #ccc;
     font-family: Consolas, Monaco, monospace;
     font-size: 14px;
-    line-height: 1.25em;
+    line-height: 1.5em;
     padding: 5px;
   }
 

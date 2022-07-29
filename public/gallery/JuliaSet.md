@@ -1,10 +1,10 @@
-
-
-
-```javascript /autoplay/kiosk
-//smartdown.import=https://biodiv.github.io/contactjs/assets/js/contact.min.js
+```javascript /autoplay/debug/module/kiosk
 //smartdown.import=three
 //smartdown.import=https://webglfundamentals.org/webgl/resources/webgl-utils.js
+
+import {
+Press, Pan, Pinch, PointerListener
+} from 'https://biodiv.github.io/contactjs/assets/js/contact.js';
 
 SQ.setToolbarFade(true);
 
@@ -184,16 +184,19 @@ requestAnimFrame = (function() {
 /////////////////////////////////////////////////////////////////////////////
 
 
+export default function start(pThis, playable, env) {
+  const log = pThis.log;
 
+  log('start', pThis);
 
 
 ////////////////////////////////////////////////////////////////////////
 
 // set up our div and add a canvas
-this.div.style.width = '100%';
-this.div.style.height = '100%';
-this.div.style.margin = 'auto';
-this.div.innerHTML = `<canvas id="appCanvas"></canvas>`
+pThis.div.style.width = '100%';
+pThis.div.style.height = '100%';
+pThis.div.style.margin = 'auto';
+pThis.div.innerHTML = `<canvas id="appCanvas"></canvas>`
 
 
 // WebGL variables
@@ -411,6 +414,9 @@ function updateURLFromSeed(fullSeed) {
   url.searchParams.set('panX', fullSeed.juliaseed.pan.x);
   url.searchParams.set('panY', fullSeed.juliaseed.pan.y);
 
+  url.searchParams.set('width', canvas.width);
+  url.searchParams.set('height', canvas.height);
+
   if (bookmarkColors) {
     const colors = fullSeed.colorseed.colors;
     for (let i = 0; i < colors.length; ++i) {
@@ -433,12 +439,21 @@ function newFractal() {
   const panX = searchParams.get('panX');
   const panY = searchParams.get('panY');
 
+  const sourceWidth = parseFloat(searchParams.get('width'));
+  const sourceHeight = parseFloat(searchParams.get('height'));
+  const width = canvas.width;
+  const height = canvas.height;
+
+  const widthScale = sourceWidth / width;
+  const heightScale = sourceHeight / height;
+  const zoomScale = Math.max(widthScale, heightScale);
+
   if (zoom !== null) {
-    fullSeed.juliaseed.zoom = parseFloat(zoom);
-    fullSeed.juliaseed.seed.x = parseFloat(seedX);
-    fullSeed.juliaseed.seed.y = parseFloat(seedY);
-    fullSeed.juliaseed.pan.x = parseFloat(panX);
-    fullSeed.juliaseed.pan.y = parseFloat(panY);
+    fullSeed.juliaseed.zoom = zoom / zoomScale;
+    fullSeed.juliaseed.seed.x = seedX;
+    fullSeed.juliaseed.seed.y = seedY;
+    fullSeed.juliaseed.pan.x = panX / zoomScale;
+    fullSeed.juliaseed.pan.y = panY / zoomScale;
   }
 
   if (bookmarkColors) {
@@ -455,6 +470,7 @@ function newFractal() {
 
   seeds.push(fullSeed);
   currentJuliaID = seeds.length - 1;
+  updateURLFromSeed(fullSeed);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -476,23 +492,23 @@ let options = {
   "supportedGestures" : [Press, Pan, Pinch]
 };
 
-let pointerListener = new PointerListener(this.div, options);
+let pointerListener = new PointerListener(pThis.div, options);
 
 
-this.div.addEventListener('press', function(event){
+pThis.div.addEventListener('press', function(event){
   const fullSeed = seeds[currentJuliaID];
   fullSeed.colorseed = new ColorSeed();
   updateURLFromSeed(fullSeed);
   drawScene();
 });
 
-this.div.onmousedown = function(e) {  
+pThis.div.onmousedown = function(e) {  
   setTimeout(function(){
     panActive = true;
   }, 100);
 }
 
-this.div.ondblclick = function(e) {
+pThis.div.ondblclick = function(e) {
   const fullSeed = seeds[currentJuliaID];
   const seed = fullSeed.juliaseed;
 
@@ -533,7 +549,7 @@ const debouncedZoom = (waitTimeForDraw, waitTimeForBookmark) => {
   };
 }
 
-this.div.onwheel = debouncedZoom(6, 500);
+pThis.div.onwheel = debouncedZoom(6, 500);
 
 // End: Events related to desktop and web usage.
 
@@ -541,7 +557,7 @@ let prev_panx = 0;
 let prev_pany = 0;
 let save_panx = 0;
 let save_pany = 0;
-this.div.addEventListener('panstart', function(event) {
+pThis.div.addEventListener('panstart', function(event) {
   if (!pinchActive) {
     panActive = true;
     prev_panx = 0;
@@ -551,7 +567,7 @@ this.div.addEventListener('panstart', function(event) {
   }
 });
 
-this.div.addEventListener('pan', function(event){
+pThis.div.addEventListener('pan', function(event){
   if (panActive == true) {
     // transform
     let x = event.detail.global.deltaX - prev_panx;
@@ -565,14 +581,14 @@ this.div.addEventListener('pan', function(event){
 });
 
 
-this.div.addEventListener('panend', function(event){
+pThis.div.addEventListener('panend', function(event){
   if (panActive) {
     panActive = false; 
     updateURLFromSeed(seeds[currentJuliaID]);
   }
 });
 
-this.div.addEventListener('swipeleft', function(event){
+pThis.div.addEventListener('swipeleft', function(event){
   if (panActive) {
     seeds[currentJuliaID].juliaseed.pan.x = save_panx;
     seeds[currentJuliaID].juliaseed.pan.y = save_pany;
@@ -592,7 +608,7 @@ this.div.addEventListener('swipeleft', function(event){
 });
 
 
-this.div.addEventListener('swiperight', function(event){
+pThis.div.addEventListener('swiperight', function(event){
   if (panActive) {
     seeds[currentJuliaID].juliaseed.pan.x = save_panx;
     seeds[currentJuliaID].juliaseed.pan.y = save_pany;
@@ -607,14 +623,14 @@ this.div.addEventListener('swiperight', function(event){
 
 
 let prev_scale = 1;
-this.div.addEventListener('pinchstart', function(event){
+pThis.div.addEventListener('pinchstart', function(event){
   pinchActive = true;
   prev_panx = 0;
   prev_pany = 0;
   prev_scale = 0;
 });
 
-this.div.addEventListener('pinch', function(event){
+pThis.div.addEventListener('pinch', function(event){
   if (pinchActive == true){
     let x = event.detail.global.deltaX - prev_panx;
     let y = event.detail.global.deltaY - prev_pany;
@@ -630,7 +646,7 @@ this.div.addEventListener('pinch', function(event){
   } 
 });
 
-this.div.addEventListener('pinchend', function(event){
+pThis.div.addEventListener('pinchend', function(event){
   updateURLFromSeed(seeds[currentJuliaID]);
   pinchActive = false; 
 });
@@ -675,4 +691,8 @@ this.div.addEventListener('pinchend', function(event){
 newFractal();
 runWebGLApp();
 
+
+
+
+}
 ```

@@ -42,5 +42,9 @@
   {
     "title": "JuliaSet",
     "description": "Randomly generated Julia Set fractals"
+  },
+  {
+    "title": "JSPsych/Psychophysics",
+    "description": "Psychophysics"
   }
 ]
