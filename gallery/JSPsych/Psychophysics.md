@@ -1,12 +1,6 @@
 
 # :::: stats
 
-- Correct: [](:!Correct)%
-- Incorrect: [](:!Incorrect)%
-- Missing: [](:!Missing)%
-- Correct RT: [](:!CorrectRT) ms
-- Incorrect RT: [](:!IncorrectRT) ms
-
 ```plotly /autoplay
 const myDiv = this.div;
 myDiv.innerHTML = `<h3>Waiting for data to be available</h3>`;
@@ -48,6 +42,14 @@ this.dependOn.data = function() {
 
 ---
 
+- Correct: [](:!Correct)%
+- Incorrect: [](:!Incorrect)%
+- Missing: [](:!Missing)%
+- Correct RT: [](:!CorrectRT) ms
+- Incorrect RT: [](:!IncorrectRT) ms
+
+---
+
 - [Repeat Experiment](:@JSPsych/Flanker)
 - [Back to jsPsych Home](:@JSPsych)
 # ::::
@@ -62,7 +64,6 @@ this.dependOn.data = () => {
     var correct_rt = Math.round(jsPsychGlobal.data.get().filter({correct: true}).select('time_elapsed').mean());
     var incorrect_rt = Math.round(jsPsychGlobal.data.get().filter({correct: false}).select('time_elapsed').mean());
 
-    console.log('data', jsPsychGlobal.data.get());
     smartdown.set({
       Correct: correct,
       Incorrect: incorrect,
@@ -107,25 +108,27 @@ const jsPsych = initJsPsych({
   on_trial_finish: function(data) {
     const trial = jsPsych.getCurrentTrial();
     const stimuli = trial.stimuli;
-    const lastStimulus = stimuli.slice(-1)[0];
-    const deltaX = data.click_x - lastStimulus.startX;
-    const deltaY = data.click_y - lastStimulus.startY;
-    const deltaRadius = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    if (data.response) {
-      data.rt = data.time_elapsed - lastStimulus.show_start_time;
-      if (data.rt > 0) {
-        const isWithin = deltaRadius < lastStimulus.radius;
-        data.correct = isWithin;
+    if (stimuli) {
+      const lastStimulus = stimuli.slice(-1)[0];
+      const deltaX = data.click_x - lastStimulus.startX;
+      const deltaY = data.click_y - lastStimulus.startY;
+      const deltaRadius = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      if (data.response) {
+        data.rt = data.time_elapsed - lastStimulus.show_start_time;
+        if (data.rt > 0) {
+          const isWithin = deltaRadius < lastStimulus.radius;
+          data.correct = isWithin;
+        }
+        else {
+          data.correct = false;
+        }
       }
       else {
-        data.correct = false;
+        data.rt = null;
+        data.correct = null;
       }
+      console.log('on_trial_finish', data, data.correct, data.rt);
     }
-    else {
-      data.rt = null;
-      data.correct = null;
-    }
-    console.log('on_trial_finish', data, data.correct, data.rt);
   },
   on_finish: function(data){
     console.log('on_finish', data.trials);
@@ -177,12 +180,29 @@ var timeline = [];
 
 var instructionsBlock = {
   type: jsPsychHtmlButtonResponse,
-  stimulus: `<br><br><h1>This is a sample program for the jspsych-psychophysics plugin.</h1><br><br><br><br>`,
-  prompt: `A white rectangle will appear. \nA red circle will appear 4 sec later.\nType Y or N to exit the experiment`,
+  stimulus: `
+    <br>
+    <h4>Instructions</h4>
+    <ul>
+      <li>
+      You will be briefly shown a small set of colored symbols, after which the screen will go blank.
+      </li>
+      <li>
+        After the blank screen is displayed, the original set of symbols will appear, but with one of those symbols having a different color.
+      </li>
+      <li>
+        Click or tap the symbol whose color changed.
+      </li>
+    </ul>
+
+    <br>
+    <br>
+  `,
+  prompt: ``,
   choices: ['Begin'],
   post_trial_gap: 1000
 };
-// timeline.push(instructionsBlock);
+timeline.push(instructionsBlock);
 
 
 const pixi_flag = false;  // jsPsych.data.getURLVariable('pixi_flag') === '1' ? true : false;
@@ -412,7 +432,6 @@ class Trial {
     this.rawStimuli = [];
 
     const locations = this.generateRandomLocations(numSymbols);
-    console.log('generateRandomLocations', locations);
 
     for (let i = 0; i < numSymbols; ++i) {
       const stimulus = this.buildRandomStimulus(locations[i].x, locations[i].y);
@@ -421,7 +440,6 @@ class Trial {
 
     const changedStimulus = this.rawStimuli[this.rawStimuli.length - 1].clone();
     changedStimulus.changeColor();
-    console.log('changedStimulus', changedStimulus);
 
     this.rawStimuli.push(changedStimulus);
   }
