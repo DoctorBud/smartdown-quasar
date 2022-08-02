@@ -373,7 +373,7 @@ class Trial {
     this.trial_duration = trialDuration;
     this.canvas_width = canvasWidth;
     this.canvas_height = canvasHeight;
-    this.background_color = '#eeeeee';
+    this.background_color = '#cccccc';
     this.data = {
       correct: null,
       rt: null,
