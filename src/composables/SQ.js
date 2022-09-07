@@ -19,7 +19,10 @@ function setToolbarFade(fade) {
 
 export default function SQ() {
   const loadCard = (cardKey) => {
-    cardToLoad.value = cardKey;
+    cardToLoad.value = null;
+    window.setTimeout(() => {
+      cardToLoad.value = cardKey;
+    });
   };
 
   return {

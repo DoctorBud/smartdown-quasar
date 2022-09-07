@@ -1,19 +1,178 @@
-```javascript /autoplay
-//smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/jspsych.js
-//smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-html-button-response.js
-//smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-html-keyboard-response.js
-//smartdown.import=https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/plugins/jspsych-image-button-response.js
 
-env.flankerData = undefined;
+# :::: stats
+
+- Accuracy [](:!Accuracy)
+- [Congruent Response (ms)](:!CongruentRT)
+- [Incongruent Response (ms)](:!IncongruentRT)
+
+```plotly /autoplay
+const myDiv = this.div;
+myDiv.innerHTML = `<h3>Waiting for data to be available</h3>`;
+this.dependOn.data = function() {
+  myDiv.innerHTML = '';
+  const experimentData = env.data;
+  const correctVsIncorrect = [0, 0];
+  experimentData.forEach((trial) => {
+    if (trial.correct !== undefined) {
+      if (trial.correct) {
+        correctVsIncorrect[0] += 1;
+      }
+      else {
+        correctVsIncorrect[1] += 1;
+      }
+    }
+  });
+  var data = [{
+    values: correctVsIncorrect,
+    labels: ['Correct', 'Incorrect'],
+    type: 'pie'
+  }];
+
+  var layout = {
+    height: 250,
+    width: 250
+  };
+
+  Plotly.newPlot(myDiv, data, layout, {displayModeBar: false});
+}
+
+```
+
+---
+
+- [Repeat Experiment](:@JSPsych/Flanker)
+- [Back to jsPsych Home](:@JSPsych)
+# ::::
+
+
+```javascript /autoplay
+this.dependOn.data = () => {
+    var total_trials = jsPsychGlobal.data.get().filter({trial_type: jsPsychImageButtonResponse}).count();
+    var accuracy = Math.round(jsPsychGlobal.data.get().filter({correct: true}).count() / total_trials * 100);
+    var congruent_rt = Math.round(jsPsychGlobal.data.get().filter({correct: true, stim_type: 'congruent'}).select('rt').mean());
+    var incongruent_rt = Math.round(jsPsychGlobal.data.get().filter({correct: true, stim_type: 'incongruent'}).select('rt').mean());
+
+    smartdown.set({
+      Accuracy: accuracy,
+      CongruentRT: congruent_rt,
+      IncongruentRT: incongruent_rt,
+    });
+
+  smartdown.showDisclosure('stats', '', 'inline,scrollable,lightbox');
+};
+```
+
+```javascript /autoplay/kiosk
+//smartdown.import=https://unpkg.com/jspsych@7.3.0/dist/index.browser.min.js
+//smartdown.import=https://unpkg.com/@jspsych/plugin-html-button-response@1.1.1/dist/index.browser.min.js
+//smartdown.import=https://unpkg.com/@jspsych/plugin-image-button-response@1.1.1/dist/index.browser.min.js
+//smartdown.import=https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.1/dist/index.browser.min.js
 
 const myDiv = this.div;
-// myDiv.style.width = '500px';
+
+SQ.setToolbarFade(true);
+
+smartdown.importCssCode(
+`
+.disclosable-content.disclosable-scrollable-content {
+  height: auto !important;
+}
+
+.smartdown-container .disclosable-wrapper.disclosable-position.disclosable-scrollable {
+  height: auto !important;
+}
+`);
+
+const jsPsych = initJsPsych({
+  display_element: myDiv.id,
+  use_webaudio: false,
+  on_trial_start: function() {
+    myDiv.focus();
+  },
+  on_finish: function(){
+    const experimentData = jsPsych.data.get().values();
+    smartdown.setVariable('data', experimentData);
+    SQ.setToolbarFade(false);
+    smartdown.toggleKiosk(myDiv.id);
+    myDiv.style.display = 'none';
+  }
+});
+window.jsPsychGlobal = jsPsych;
+
+env.data = undefined;
+const fakeData = [
+  {
+    "rt": 123030,
+    "stimulus": "\n<br>\n<p>\n  In this task, you will see five arrows on the screen, like the example below.\n</p>\n<img src=\"/gallery/resources/inc1.png\"></img>\n<p>\nPress Left if the middle arrow is pointing left. (<b>&lt;</b>)\n</p>\n<p>\nPress Right if the middle arrow is pointing right. (<b>&gt;</b>)\n</p>\n<p>\nPress <b>Begin</b>.\n</p>\n",
+    "button_pressed": "0",
+    "trial_type": "html-button-response",
+    "trial_index": 0,
+    "time_elapsed": 123033,
+    "internal_node_id": "0.0-0.0"
+  },
+  {
+    "rt": 1217.9999999999854,
+    "stimulus": "/gallery/resources/con1.png",
+    "button_pressed": "1",
+    "stim_type": "congruent",
+    "direction": "left",
+    "trial_type": "image-button-response",
+    "trial_index": 1,
+    "time_elapsed": 125257,
+    "internal_node_id": "0.0-1.0-0.0",
+    "correct": false
+  },
+  {
+    "rt": 1058,
+    "stimulus": "/gallery/resources/inc2.png",
+    "button_pressed": "1",
+    "stim_type": "incongruent",
+    "direction": "left",
+    "trial_type": "image-button-response",
+    "trial_index": 2,
+    "time_elapsed": 126840,
+    "internal_node_id": "0.0-1.0-0.1",
+    "correct": false
+  },
+  {
+    "rt": 676.0000000000291,
+    "stimulus": "/gallery/resources/con2.png",
+    "button_pressed": "1",
+    "stim_type": "congruent",
+    "direction": "right",
+    "trial_type": "image-button-response",
+    "trial_index": 3,
+    "time_elapsed": 128357,
+    "internal_node_id": "0.0-1.0-0.2",
+    "correct": true
+  },
+  {
+    "rt": 500,
+    "stimulus": "/gallery/resources/inc1.png",
+    "button_pressed": "1",
+    "stim_type": "incongruent",
+    "direction": "right",
+    "trial_type": "image-button-response",
+    "trial_index": 4,
+    "time_elapsed": 129940,
+    "internal_node_id": "0.0-1.0-0.3",
+    "correct": true
+  },
+  {
+    "trial_type": "html-keyboard-response",
+    "trial_index": 5,
+    "time_elapsed": 131906,
+    "internal_node_id": "0.0-2.0"
+  }
+];
+
+// smartdown.set('data', fakeData);
+// return;
+
 myDiv.style.height = '400px';
 myDiv.style.margin = 'auto';
 
-smartdown.toggleKiosk(myDiv.id);
-
-smartdown.importCssUrl('https://cdn.jsdelivr.net/gh/jspsych/jsPsych@6.1.0/css/jspsych.css');
+smartdown.importCssUrl('https://unpkg.com/jspsych@7.2.3/css/jspsych.css');
 smartdown.importCssCode(
 `
 #${myDiv.id} .jspsych-content img {
@@ -29,25 +188,16 @@ smartdown.importCssCode(
 b.bigbutton {
   margin-left: 20px;
   margin-right: 20px;
+  padding: 0;
   font-weight: 600;
-  font-size: 150%;
+  font-size: 50px;
 }
 `);
 
 const imgPrefix = '/gallery/resources/';
 
-var reps_per_trial_type = 1;
-
 /*set up experiment structure*/
 var timeline = [];
-
-var welcomeBlock = {
-  type: 'html-button-response',
-  stimulus: '<br>Welcome to the experiment. Press <b>Begin</b>.',
-  choices: ['Begin'],
-};
-timeline.push(welcomeBlock);
-
 
 const instructionsStimulus =
 `
@@ -67,9 +217,8 @@ Press <b>Begin</b>.
 </p>
 `;
 
-
 var instructionsBlock = {
-  type: 'html-button-response',
+  type: jsPsychHtmlButtonResponse,
   stimulus: instructionsStimulus,
   choices: ['Begin'],
   post_trial_gap: 1000
@@ -98,7 +247,7 @@ var testStimuli = [
 /* defining test timeline */
 var testBlock = {
   timeline: [{
-    type: 'image-button-response',
+    type: jsPsychImageButtonResponse,
     choices: ['<b class="bigbutton">&lt;</b>', '<b class="bigbutton">&gt;</b>'],
     trial_duration: 1500,
     stimulus: jsPsych.timelineVariable('stimulus'),
@@ -120,57 +269,28 @@ var testBlock = {
     }
   }],
   timeline_variables: testStimuli,
-  sample: {type: 'fixed-repetitions', size: reps_per_trial_type}
+  sample: {
+    type: 'with-replacement', // fixed-repetitions',
+    size: 6,
+    randomize_order: true,
+  }
 };
 timeline.push(testBlock);
 
 
-var debriefBlock = {
-  type: 'html-keyboard-response',
-  choices: jsPsych.NO_KEYS,
-  stimulus: function() {
-    var total_trials = jsPsych.data.get().filter({trial_type: 'image-button-response'}).count();
-    var accuracy = Math.round(jsPsych.data.get().filter({correct: true}).count() / total_trials * 100);
-    var congruent_rt = Math.round(jsPsych.data.get().filter({correct: true, stim_type: 'congruent'}).select('rt').mean());
-    var incongruent_rt = Math.round(jsPsych.data.get().filter({correct: true, stim_type: 'incongruent'}).select('rt').mean());
-    const result =
-`
-<br>
-<p>
-  You responded correctly on <strong>${accuracy}%</strong> of the trials.
-</p>
-<p>
-  Your average response time for congruent trials was <strong>${congruent_rt}ms</strong>.
-</p>
-<p>
-  Your average response time for incongruent trials was <strong>${incongruent_rt}ms</strong>.
-</p>
-<p>
-The experiment is now complete. Thank you!
-</p>
-`;
+// var debriefBlock = {
+//   type: 'html-keyboard-response',
+//   choices: jsPsych.NO_KEYS,
+//   stimulus: function() {
+//     jsPsych.endExperiment();
 
-    smartdown.toggleKiosk(myDiv.id);
-    jsPsych.endExperiment();
-
-    return result;
-  }
-};
-timeline.push(debriefBlock);
+//     return 'xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx';
+//   }
+// };
+// timeline.push(debriefBlock);
 
 
-jsPsych.init({
-  on_trial_start: function() {
-    myDiv.focus();
-  },
-  timeline: timeline,
-  display_element: myDiv,
-  on_finish: function() {
-    const experimentData = jsPsych.data.get().values();
-    smartdown.setVariable('flankerData', experimentData);
-  }
-});
-
+jsPsych.run(timeline);
 
 window.setTimeout(function() {
   const top = myDiv.offsetTop - 40;
@@ -180,9 +300,3 @@ window.setTimeout(function() {
 }, 0);
 
 ```
-
----
-
-- [View Flanker Data](:@JSPsych/FlankerView)
-- [Back to jsPsych Home](:@JSPsych)
-

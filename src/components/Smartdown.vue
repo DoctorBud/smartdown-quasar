@@ -65,16 +65,18 @@ export default {
     }
 
     watch(SQ.cardToLoad, async () => {
-      const cardPath = `gallery/${SQ.cardToLoad.value}.md`;
-      console.log('cardPath', cardPath);
+      if (SQ.cardToLoad.value) {
+        const cardPath = `gallery/${SQ.cardToLoad.value}.md`;
+        console.log('cardPath', cardPath);
 
-      markdown.value = await (await fetch(cardPath)).text();
-      html.value = await smartdownToHTML(markdown.value);
-      await nextTick();
-      const outputDiv = document.getElementById('smartdown-output');
-      smartdown.setHome(markdown.value, outputDiv, async () => {
-        smartdown.startAutoplay(outputDiv);
-      });
+        markdown.value = await (await fetch(cardPath)).text();
+        html.value = await smartdownToHTML(markdown.value);
+        await nextTick();
+        const outputDiv = document.getElementById('smartdown-output');
+        smartdown.setHome(markdown.value, outputDiv, async () => {
+          smartdown.startAutoplay(outputDiv);
+        });
+      }
     });
 
     onMounted(async () => {
