@@ -184,19 +184,19 @@ requestAnimFrame = (function() {
 /////////////////////////////////////////////////////////////////////////////
 
 
-export default function start(pThis, playable, env) {
-  const log = pThis.log;
+export default function start(playable, env) {
+  const log = this.log;
 
-  log('start', pThis);
+  log('start', this);
 
 
 ////////////////////////////////////////////////////////////////////////
 
 // set up our div and add a canvas
-pThis.div.style.width = '100%';
-pThis.div.style.height = '100%';
-pThis.div.style.margin = 'auto';
-pThis.div.innerHTML = `<canvas id="appCanvas"></canvas>`
+this.div.style.width = '100%';
+this.div.style.height = '100%';
+this.div.style.margin = 'auto';
+this.div.innerHTML = `<canvas id="appCanvas"></canvas>`
 
 
 // WebGL variables
@@ -492,23 +492,23 @@ let options = {
   "supportedGestures" : [Press, Pan, Pinch]
 };
 
-let pointerListener = new PointerListener(pThis.div, options);
+let pointerListener = new PointerListener(this.div, options);
 
 
-pThis.div.addEventListener('press', function(event){
+this.div.addEventListener('press', function(event){
   const fullSeed = seeds[currentJuliaID];
   fullSeed.colorseed = new ColorSeed();
   updateURLFromSeed(fullSeed);
   drawScene();
 });
 
-pThis.div.onmousedown = function(e) {  
+this.div.onmousedown = function(e) {  
   setTimeout(function(){
     panActive = true;
   }, 100);
 }
 
-pThis.div.ondblclick = function(e) {
+this.div.ondblclick = function(e) {
   const fullSeed = seeds[currentJuliaID];
   const seed = fullSeed.juliaseed;
 
@@ -549,7 +549,7 @@ const debouncedZoom = (waitTimeForDraw, waitTimeForBookmark) => {
   };
 }
 
-pThis.div.onwheel = debouncedZoom(6, 500);
+this.div.onwheel = debouncedZoom(6, 500);
 
 // End: Events related to desktop and web usage.
 
@@ -557,7 +557,7 @@ let prev_panx = 0;
 let prev_pany = 0;
 let save_panx = 0;
 let save_pany = 0;
-pThis.div.addEventListener('panstart', function(event) {
+this.div.addEventListener('panstart', function(event) {
   if (!pinchActive) {
     panActive = true;
     prev_panx = 0;
@@ -567,7 +567,7 @@ pThis.div.addEventListener('panstart', function(event) {
   }
 });
 
-pThis.div.addEventListener('pan', function(event){
+this.div.addEventListener('pan', function(event){
   if (panActive == true) {
     // transform
     let x = event.detail.global.deltaX - prev_panx;
@@ -581,14 +581,14 @@ pThis.div.addEventListener('pan', function(event){
 });
 
 
-pThis.div.addEventListener('panend', function(event){
+this.div.addEventListener('panend', function(event){
   if (panActive) {
     panActive = false; 
     updateURLFromSeed(seeds[currentJuliaID]);
   }
 });
 
-pThis.div.addEventListener('swipeleft', function(event){
+this.div.addEventListener('swipeleft', function(event){
   if (panActive) {
     seeds[currentJuliaID].juliaseed.pan.x = save_panx;
     seeds[currentJuliaID].juliaseed.pan.y = save_pany;
@@ -608,7 +608,7 @@ pThis.div.addEventListener('swipeleft', function(event){
 });
 
 
-pThis.div.addEventListener('swiperight', function(event){
+this.div.addEventListener('swiperight', function(event){
   if (panActive) {
     seeds[currentJuliaID].juliaseed.pan.x = save_panx;
     seeds[currentJuliaID].juliaseed.pan.y = save_pany;
@@ -623,14 +623,14 @@ pThis.div.addEventListener('swiperight', function(event){
 
 
 let prev_scale = 1;
-pThis.div.addEventListener('pinchstart', function(event){
+this.div.addEventListener('pinchstart', function(event){
   pinchActive = true;
   prev_panx = 0;
   prev_pany = 0;
   prev_scale = 0;
 });
 
-pThis.div.addEventListener('pinch', function(event){
+this.div.addEventListener('pinch', function(event){
   if (pinchActive == true){
     let x = event.detail.global.deltaX - prev_panx;
     let y = event.detail.global.deltaY - prev_pany;
@@ -646,7 +646,7 @@ pThis.div.addEventListener('pinch', function(event){
   } 
 });
 
-pThis.div.addEventListener('pinchend', function(event){
+this.div.addEventListener('pinchend', function(event){
   updateURLFromSeed(seeds[currentJuliaID]);
   pinchActive = false; 
 });

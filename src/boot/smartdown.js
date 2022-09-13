@@ -55,6 +55,7 @@ export default async (/* { app } */) => {
 
   await prefetchGalleryNotes();
 
+  // console.log('process.env.GALLERY_DEV_MODE', process.env.GALLERY_DEV_MODE);
   if (process.env.GALLERY_DEV_MODE) {
     deleteAllNotes();
     loadGalleryNotes();
