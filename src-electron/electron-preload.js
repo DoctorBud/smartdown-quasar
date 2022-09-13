@@ -22,5 +22,4 @@ const { contextBridge } = require('electron');
 
 const publicFolder = `${path.resolve(__dirname, process.env.QUASAR_PUBLIC_FOLDER)}/`;
 
-console.log('publicFolder', publicFolder);
 contextBridge.exposeInMainWorld('publicFolder', publicFolder);

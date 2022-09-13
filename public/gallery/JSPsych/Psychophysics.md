@@ -489,10 +489,10 @@ class Trial {
 // timeline.push(new Trial(1));
 
 timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
-// timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
-// timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
-// timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
-// timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
+timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
+timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
+timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
+timeline.push(new Trial(3 + Math.floor(Math.random() * 3)));
 
 jsPsych.run(timeline);
 
