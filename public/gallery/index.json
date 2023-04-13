@@ -46,5 +46,13 @@
   {
     "title": "JSPsych/Psychophysics",
     "description": "Psychophysics"
+  },
+  {
+    "title": "OpenJSCAD",
+    "description": "OpenJSCAD"
+  },
+  {
+    "title": "ExternalData",
+    "description": "External Data"
   }
 ]

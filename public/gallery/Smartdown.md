@@ -57,9 +57,7 @@ print(Fibonacci(9))
 #### Playables
 
 ```javascript /playable
-var s = 'JavaScript syntax highlighting';
-alert(s + "foo");
-const a = 'hello' + "world!"; // comment
+alert('Hello from Smartdown'); // This is a comment
 ```
 
 #### Styles

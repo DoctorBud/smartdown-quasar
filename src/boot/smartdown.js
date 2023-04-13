@@ -61,6 +61,46 @@ export default async (/* { app } */) => {
     loadGalleryNotes();
   }
 
+  function scrollToSubHash(cardKeySubhash) {
+    let scrollToTop = true;
+
+    if (cardKeySubhash) {
+      const target = document.getElementById(cardKeySubhash);
+      if (target) {
+        scrollToTop = false;
+        window.setTimeout(() => {
+          target.scrollIntoView({
+            behavior: 'smooth',
+          });
+        }, 300);
+      }
+    }
+
+    if (scrollToTop) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+
+      // document.body.scrollTop = 0; // For Chrome, Safari and Opera
+      // document.documentElement.scrollTop = 0; // For IE and Firefox
+    }
+  }
+
+  function locationHashChanged() {
+    let subhash = window.location.hash;
+    if (subhash.startsWith('##')) {
+      subhash = subhash.slice(2);
+      scrollToSubHash(subhash);
+    }
+
+    return false;
+  }
+
+  const doneHandler = async () => {
+    window.onhashchange = locationHashChanged;
+  };
+
   const smartdownPrefix = process.env.SMARTDOWN_PREFIX || '';
   const baseURL = window.publicFolder || `${smartdownPrefix}/`;
   const resultPromise = new Promise((resolve) => {
@@ -68,6 +108,8 @@ export default async (/* { app } */) => {
       icons,
       baseURL,
       async () => {
+        doneHandler();
+        window.setTimeout(locationHashChanged, 1000);
         resolve();
       },
       cardLoader,

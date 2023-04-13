@@ -3,16 +3,19 @@
 </template>
 
 <script>
-import hljs from 'highlight.js/lib/core';
+import hljs from 'highlight.js/lib/common';
 import { highlightPlugin } from 'prosemirror-highlightjs';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { schema, defaultMarkdownParser, defaultMarkdownSerializer } from 'prosemirror-markdown';
 import { exampleSetup } from 'prosemirror-example-setup';
+import 'highlight.js/styles/base16/tomorrow-night.css';
 
 const createState = (content) => {
   const plugins = exampleSetup({ schema });
-  plugins.push(highlightPlugin(hljs));
+  const hljsPlugin = highlightPlugin(hljs);
+
+  plugins.push(hljsPlugin);
 
   return EditorState.create({
     doc: defaultMarkdownParser.parse(content),

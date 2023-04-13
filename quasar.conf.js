@@ -15,6 +15,9 @@ const { configure } = require('quasar/wrappers');
 const packageVersion = require('./package.json').version;
 
 const smartdownPrefix = process.env.SMARTDOWN_PREFIX || '';
+const smartdownPublicPath = smartdownPrefix.startsWith('http') ? '/' : `${smartdownPrefix}/`;
+
+const MonacoEditorWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 module.exports = configure((ctx) => ({
   // https://quasar.dev/quasar-cli/supporting-ts
@@ -60,7 +63,7 @@ module.exports = configure((ctx) => ({
     vueRouterMode: 'history', // available values: 'hash', 'history'
 
     // transpile: false,
-    publicPath: `${smartdownPrefix}/`,
+    publicPath: smartdownPublicPath,
 
     env: {
       packageVersion,
@@ -87,6 +90,17 @@ module.exports = configure((ctx) => ({
     chainWebpack(chain) {
       chain.plugin('eslint-webpack-plugin')
         .use(ESLintPlugin, [{ extensions: ['js', 'vue'] }]);
+    },
+    extendWebpack(cfg) {
+      const plugin = new MonacoEditorWebpackPlugin({
+        // https://github.com/Microsoft/monaco-editor-webpack-plugin#options
+        // Include a subset of languages support
+        // Some language extensions like typescript are so huge that may impact build performance
+        // e.g. Build full languages support with webpack 4.0 takes over 80 seconds
+        // Languages are loaded on demand at runtime
+        languages: [], // ['javascript', 'html', 'typescript', 'markdown'],
+      });
+      cfg.plugins.push(plugin);
     },
   },
 
@@ -230,12 +244,6 @@ module.exports = configure((ctx) => ({
 
     // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
     chainWebpackMain(chain) {
-      chain.plugin('eslint-webpack-plugin')
-        .use(ESLintPlugin, [{ extensions: ['js'] }]);
-    },
-
-    // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
-    chainWebpackPreload(chain) {
       chain.plugin('eslint-webpack-plugin')
         .use(ESLintPlugin, [{ extensions: ['js'] }]);
     },

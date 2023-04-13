@@ -97,33 +97,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
   }
 
-  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-    super.touchesBegan(touches, with: event)
-
-    //let statusBarRect = UIApplication.shared.statusBarFrame
-
-    let statusBarRect = CGRect(x: 0, y: 0, width: 100, height: 100)
-//    if #available(iOS 13.0, *) {
-//        let window = UIApplication
-//        .shared
-//        .connectedScenes
-//        .compactMap { $0 as? UIWindowScene }
-//        .flatMap { $0.windows }
-//        .first { $0.isKeyWindow }
-//        // statusBarRect = window.statusBarFrame
-//    } else {
-//      statusBarRect = UIApplication.shared.statusBarFrame
-//    }
-//
-    guard let touchPoint = event?.allTouches?.first?.location(in: self.window) else { return }
-
-    if statusBarRect.contains(touchPoint) {
-      //NotificationCenter.default.post(CAPBridge.statusBarTappedNotification)
-      NotificationCenter.default.post(name: .capacitorStatusBarTapped, object: nil)
-    }
-    print("#application...touchesBegan")
-  }
-
   func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
     //NotificationCenter.default.post(name: Notification.Name(CAPNotifications.DidRegisterForRemoteNotificationsWithDeviceToken.name()), object: deviceToken)
     NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
