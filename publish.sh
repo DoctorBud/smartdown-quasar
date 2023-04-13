@@ -5,15 +5,16 @@
 
 REMOTE=`git remote get-url --push origin`
 rm -rf dist/spa
-SMARTDOWN_PREFIX=/smartdown-quasar npm run build
-rm -rf /tmp/publishSQ
-mkdir /tmp/publishSQ
-cp -r dist/spa/ /tmp/publishSQ/
-cd /tmp/publishSQ/
+SMARTDOWN_PREFIX=/smartdown-quasar yarn build
+rm -rf /tmp/smartdown-publish/
+cp -r dist/spa /tmp/smartdown-publish/
+cd /tmp/smartdown-publish/
 cp index.html 404.html
-ls -l
 git init
-git add .
+git checkout -b master
+git checkout -b gh-pages
+touch .nojekyll
+git add . .nojekyll
 git commit -m "Initial commit"
 git remote add origin ${REMOTE}
-git push --force origin master:gh-pages
+git push --force origin gh-pages

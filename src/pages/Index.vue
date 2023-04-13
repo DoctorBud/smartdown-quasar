@@ -17,7 +17,11 @@
 import Container from 'src/components/Container.vue';
 import NoteCard from 'src/components/NoteCard.vue';
 import { useLocalNotes } from 'src/composables/notes';
-import { defineComponent } from 'vue';
+import {
+  defineComponent,
+  onMounted,
+  nextTick,
+} from 'vue';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -26,6 +30,12 @@ export default defineComponent({
   setup() {
     const notes = useLocalNotes();
     const router = useRouter();
+
+    onMounted(async () => {
+      await nextTick();
+      router.push('/'); // '/note/OpenJSCAD');
+    });
+
     return {
       router,
       notes,
