@@ -7,7 +7,6 @@
 env.Drinks = [];
 
 this.dependOn.AddDrink = async () => {
-  console.log('boo');
   if (env.AddDrink) {
     env.Drinks.push(env.AddDrink);
     smartdown.set('AddDrink', '');

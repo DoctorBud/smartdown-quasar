@@ -5,8 +5,7 @@
       class="smartdown-outer-container smartdown-theme-chat">
       <div
         class="smartdown-container"
-        id="smartdown-output"
-        v-html="html">
+        id="smartdown-output">
       </div>
     </div>
   </div>
@@ -65,6 +64,7 @@ export default {
     }
 
     watch(SQ.cardToLoad, async () => {
+      console.log('watch(SQ.cardToLoad', SQ.cardToLoad);
       if (SQ.cardToLoad.value) {
         const cardPath = `gallery/${SQ.cardToLoad.value}.md`;
         console.log('cardPath', cardPath);
@@ -80,7 +80,8 @@ export default {
     });
 
     onMounted(async () => {
-      html.value = await smartdownToHTML(markdown.value);
+      html.value = await smartdownToHTML(markdown.value); // Is this necessary?
+
       await nextTick();
       const outputDiv = document.getElementById('smartdown-output');
       smartdown.setHome(markdown.value, outputDiv, async () => {

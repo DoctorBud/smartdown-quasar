@@ -50,5 +50,9 @@
   {
     "title": "OpenJSCAD",
     "description": "OpenJSCAD"
+  },
+  {
+    "title": "ExternalData",
+    "description": "External Data"
   }
 ]

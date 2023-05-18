@@ -25,6 +25,8 @@ export default function SQ() {
     });
   };
 
+  const version = '0.0.9';
+
   return {
     loadCard,
     cardToLoad,
@@ -34,5 +36,6 @@ export default function SQ() {
     toolbarTransparency,
     toolbarVisibility,
     toolbarFade,
+    version,
   };
 }
