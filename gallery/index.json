@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Markdown",
+    "description": "Simple Markdown"
+  },
+  {
+    "title": "Smartdown",
+    "description": "Simple Smartdown"
+  },
+  {
+    "title": "SQ",
+    "description": "SQ - SmartdownQuasar"
+  },
+  {
+    "title": "Ellipse",
+    "description": "P5JS Ellipse"
+  },
+  {
+    "title": "Mandelbrot",
+    "description": "Mandelbrot"
+  },
+  {
+    "title": "Mobius",
+    "description": "P5JS Mobius"
+  },
+  {
+    "title": "Pong",
+    "description": "Pong Game adapted from https://kellylougheed.medium.com/javascript-pong-with-p5-js-3ae1b859418c"
+  },
+  {
+    "title": "JSPsych",
+    "description": "JSPsych"
+  },
+  {
+    "title": "JSPsych/Flanker",
+    "description": "Flanker"
+  },
+  {
+    "title": "ModeMeter",
+    "description": "Mode Meter"
+  },
+  {
+    "title": "JuliaSet",
+    "description": "Randomly generated Julia Set fractals"
+  },
+  {
+    "title": "JSPsych/Psychophysics",
+    "description": "Psychophysics"
+  },
+  {
+    "title": "OpenJSCAD",
+    "description": "OpenJSCAD"
+  },
+  {
+    "title": "ExternalData",
+    "description": "External Data"
+  }
+]
